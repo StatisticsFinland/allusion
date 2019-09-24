@@ -72,6 +72,10 @@
             "Name for area selection",
             "Nimeä aluevalinta"
         ],
+        "newCustomArea": [
+            "Name for custom area selection",
+            "Nimeä uusi aluevalinta"
+        ],
         "selectFirst": [
             "Select areas first",
             "Valitse ensin alueita"

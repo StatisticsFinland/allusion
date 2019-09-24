@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Hidden from '@material-ui/core/Hidden';
-
+import * as _ from 'lodash';
 /* OpenLayers */
 import OLMap from 'ol/Map';
 import View from 'ol/View';
-import { transform } from 'ol/proj.js';
-import { defaults as defaultInteractions } from 'ol/interaction.js';
+import {transform} from 'ol/proj.js';
+import {defaults as defaultInteractions} from 'ol/interaction.js';
 
-import { blackList, isEmpty, srs, makeCopy, fieldAliases } from '../../globals';
-import { EPSG3067 } from './projection/projections';
+import {blackList, fieldAliases, isEmpty, makeCopy, srs} from '../../globals';
+import {EPSG3067} from './projection/projections';
 import Basemaps from './basemaps/Basemaps';
 import Layers from './layers/Layers';
 import FinMun from './layers/FinMun';
@@ -26,11 +26,13 @@ import SearchDialog from './search/SearchDialog';
 import LayerDrawer from './LayerDrawer';
 import Spinner from './../Spinner';
 
-import { numericSort } from 'simple-statistics'
+import {numericSort} from 'simple-statistics'
 import chroma from 'chroma-js';
 import Legend from './Legend';
+import calculateUnionAggregate from "./functions/calculateUnionAggregate";
 
-let interactions = defaultInteractions({ altShiftDragRotate: false, pinchRotate: false });
+
+let interactions = defaultInteractions({altShiftDragRotate: false, pinchRotate: false});
 
 /* Initiate basemaps */
 let BasemapSel = Basemaps.map(layer => layer["layer"]);
@@ -61,6 +63,7 @@ class Map extends Component {
     loading: false,
     selection: [],
     savedAreas: [],
+    savedCustomAreas: [],
     variable: '',
     selectedLayer: null,
     relativeToArea: false
@@ -133,7 +136,7 @@ class Map extends Component {
     this.map.on('singleclick', event => {
       if (!select.getActive() || select.getFeatures().getArray().length === 0) {
         selectionCoordinates = event.coordinate;
-        this.getFeaturesByCoordinates(event, selectionCoordinates)
+        this.getFeaturesByCoordinates(event, selectionCoordinates);
         this.pop();
       }
     });
@@ -148,7 +151,7 @@ class Map extends Component {
       getFeatureInfo(event, this.map, selectedFeatures).then(featureInfo => {
         this.pop(event, parseFeatureInfo(featureInfo, '', blackList.map));
       })
-    })
+    });
 
     dragBox.on('boxend', event => {
       selectionExtent = dragBox.getGeometry().getExtent();
@@ -175,13 +178,15 @@ class Map extends Component {
       source.forEachFeatureIntersectingExtent(extent, feature => {
         //feature.setStyle(createSelectionStyle(this.props.selectedLayer.style))
         selectedFeatures.push(feature);
-      })
+        console.log("Selected");
+        console.log(feature);
+      });
       //  selectedFeatures.forEach(feature => feature.setStyle(createStyle(this.state.selectedLayer.style, null, true)))
       getFeatureInfo(event, this.map, selectedFeatures.getArray()).then(featureInfo => {
         this.pop(event, parseFeatureInfo(featureInfo, '', blackList.map));
       })
     }
-  }
+  };
 
   getFeaturesByCoordinates = (event, coordinates) => {
     selectionExtent = null;
@@ -189,11 +194,11 @@ class Map extends Component {
     getFeatureInfo(event, this.map, null, coordinates).then(featureInfo => {
       this.pop(event, parseFeatureInfo(featureInfo, '', blackList.map));
     })
-  }
+  };
 
   /* Basemap switcher */
   changeBasemap = (event, value = this.state.basemap) => {
-    this.setState({ basemap: value });
+    this.setState({basemap: value});
     let basemaps = this.map.getLayers().getArray().filter(layer => layer.get('type') === 'base');
     basemaps.forEach(basemap => {
       if (basemap.get('name') === value) {
@@ -208,13 +213,13 @@ class Map extends Component {
 
   /* Change basemap opacity */
   changeBasemapOpacity = (event, value = this.state.basemapOpacity) => {
-    this.setState({ basemapOpacity: value });
+    this.setState({basemapOpacity: value});
     let basemaps = this.map.getLayers().getArray().filter(layer => layer.get('type') === 'base');
     basemaps.forEach(basemap => basemap.setOpacity(value));
   };
 
   changeLayerOpacity = (event, value = this.state.layerOpacity) => {
-    this.setState({ layerOpacity: value });
+    this.setState({layerOpacity: value});
     let layers = this.map.getLayers().getArray().filter(layer => layer.get('type') !== 'base');
     layers.forEach(layer => layer.setOpacity(value));
   };
@@ -239,21 +244,21 @@ class Map extends Component {
         }
         let matchingFeatures = features.filter(feature => selectionArray.some(selectedFeature => {
           return selectedFeature.get('municipalityCode') === feature.get('municipalityCode') && feature.get('landArea') === selectedFeature.get('landArea')
-        }))
+        }));
         if (Array.isArray(matchingFeatures) && matchingFeatures.length > 0) {
           select.getFeatures().clear();
-          matchingFeatures.forEach(matchingFeature => select.getFeatures().push(matchingFeature))
+          matchingFeatures.forEach(matchingFeature => select.getFeatures().push(matchingFeature));
           getFeatureInfo('variableChange', this.map, matchingFeatures).then(featureInfo => {
             this.pop('variableChange', parseFeatureInfo(featureInfo, '', blackList.map));
           })
         }
       } else {
-        this.setState({ featureInfo: parseFeatureInfo(featureInfo, '', blackList.map) }, () => {
+        this.setState({featureInfo: parseFeatureInfo(featureInfo, '', blackList.map)}, () => {
           pop && this.props.toggleInfoDrawer(true)
         });
       }
     })
-  }
+  };
 
   /* Map PopOver */
   pop = (event, featureInfo) => {
@@ -267,21 +272,21 @@ class Map extends Component {
           popY: y - this.state.popYmargin,
         }, () => {
           if (featureInfo !== this.state.featureInfo && !isEmpty(featureInfo)) {
-            this.setState({ popOpen: false }, () => {
-              this.props.toggleInfoDrawer(false)
-              this.setState({ featureInfo }, () => {
-                this.setState({ popOpen: true });
+            this.setState({popOpen: false}, () => {
+              this.props.toggleInfoDrawer(false);
+              this.setState({featureInfo}, () => {
+                this.setState({popOpen: true});
               })
             })
           } else {
-            this.setState({ popOpen: false })
+            this.setState({popOpen: false})
           }
         })
       } else {
-        this.setState({ popOpen: false });
+        this.setState({popOpen: false});
         // this.props.layerDrawerVisibility && this.props.toggleLayerDrawer();
         if (featureInfo !== this.state.featureInfo && !isEmpty(featureInfo)) {
-          this.setState({ featureInfo }, () => {
+          this.setState({featureInfo}, () => {
             this.props.toggleInfoDrawer(true)
           })
         } else {
@@ -290,15 +295,15 @@ class Map extends Component {
       }
     } else if (event === 'variableChange') {
       if (featureInfo !== this.state.featureInfo && !isEmpty(featureInfo)) {
-        this.setState({ featureInfo })
+        this.setState({featureInfo});
         this.props.toggleInfoDrawer(true);
       } else {
-        this.setState({ popOpen: false });
+        this.setState({popOpen: false});
         this.props.toggleInfoDrawer(false);
       }
     } else {
-      this.props.toggleInfoDrawer(false)
-      this.setState({ popOpen: false });
+      this.props.toggleInfoDrawer(false);
+      this.setState({popOpen: false});
     }
   };
 
@@ -317,9 +322,9 @@ class Map extends Component {
 
 
   setVariable = variable => {
-    this.setState({ variable: this.state.relativeToArea ? `${variable}_km2` : variable }, () => {
+    this.setState({variable: this.state.relativeToArea ? `${variable}_km2` : variable}, () => {
     });
-  }
+  };
 
   /* Get Map values to App level */
   currentMapValues = () => {
@@ -330,14 +335,14 @@ class Map extends Component {
     const basemapOpacity = Number(this.state.basemapOpacity).toFixed(2);
     const layerOpacity = Number(this.state.layerOpacity).toFixed(2);
     const layer = this.props.selectedLayer ? this.props.selectedLayer.uuid : null;
-    const mapValues = { x: x, y: y, z: z, b: basemap, bo: basemapOpacity, lo: layerOpacity, layer: layer };
+    const mapValues = {x: x, y: y, z: z, b: basemap, bo: basemapOpacity, lo: layerOpacity, layer: layer};
     return mapValues;
   };
 
   prepareStyle = (layer, features, property) => {
 
-    let selectedLayer = makeCopy(this.state.selectedLayer)
-    let uniqueValues = [...new Set(features.map(feat => !isNaN(feat.get(property)) ? parseFloat(feat.get(property)) : feat.get(property)))]
+    let selectedLayer = makeCopy(this.state.selectedLayer);
+    let uniqueValues = [...new Set(features.map(feat => !isNaN(feat.get(property)) ? parseFloat(feat.get(property)) : feat.get(property)))];
     let values = numericSort(uniqueValues);
     let numClasses = values.length > 5 ? 6 : values.length !== 0 ? values.length : 1;
 
@@ -352,7 +357,7 @@ class Map extends Component {
       fill: '',
       stroke: '',
       strokeWidth: 0.5
-    }
+    };
 
     if (this.props.statisticCode === 'NONE') {
       style.styling = 'single';
@@ -363,30 +368,29 @@ class Map extends Component {
       style.fieldValues = ['NAN'];
       style.fill = 'rgba(66,66,66,0.85)';
       style.stroke = 'rgb(255,255,255)';
-    }
-    else {
+    } else {
 
       let rawColors = chroma.scale('Blues').colors(numClasses);
       let colors = rawColors.map(col => {
-        let c = chroma(col).rgba()
+        let c = chroma(col).rgba();
         let rgba = `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${c[3]})`;
         return rgba;
-      })
+      });
 
       style.fieldValues = calculateBreaks(values, numClasses, 'ckmeans');
       style.fill = colors,
-        style.stroke = 'rgba(0,115,176,0.66)';
+          style.stroke = 'rgba(0,115,176,0.66)';
 
     }
 
     selectedLayer.style = style;
-    this.setState({ selectedLayer })
+    this.setState({selectedLayer});
     layer.setStyle(createStyle(style, null, null, this.state.relativeToArea, this.props.labels));
 
-  }
+  };
 
   changeMuns = selection => {
-    this.setState({ selection }, () => {
+    this.setState({selection}, () => {
       this.props.handleSelectingMunips(selection);
     });
 
@@ -414,7 +418,7 @@ class Map extends Component {
     const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'SparQL');
     const features = layer.getSource().getFeatures();
     this.state.selectedLayer && this.prepareStyle(layer, features, this.state.variable);
-  }
+  };
 
   addFeaturesToMap = (response) => {
     const features = response.features;
@@ -429,7 +433,28 @@ class Map extends Component {
       }
     }, () => {
 
-      source.addFeatures(features)
+
+      const savedCustomAreas = this.state.savedCustomAreas;
+
+      let featuresBelongingToCustomAreas = _.uniq(_.flatten(
+          savedCustomAreas
+              .filter(area => area.activated)
+              .map(area => area.selection)
+              .map(selection => {
+                // TODO: Modify if wanted to have municipality in multiple areas
+                let customAreaFeatures = features.filter(feature => _.includes(selection, feature.get('municipalityCode')));
+                let customAreaFeature = calculateUnionAggregate(customAreaFeatures);
+                if (customAreaFeature) {
+                  source.addFeature(customAreaFeature);
+                }
+                return customAreaFeatures;
+              })));
+
+      let remainingFeatures = _.difference(features, featuresBelongingToCustomAreas);
+      if (remainingFeatures.length > 0) {
+        source.addFeatures(remainingFeatures);
+      }
+
       if (selectedFeatures) {
         let selectionArray;
         if (Array.isArray(selectedFeatures)) {
@@ -439,10 +464,10 @@ class Map extends Component {
         }
         let matchingFeatures = features.filter(feature => selectionArray.some(selectedFeature => {
           return selectedFeature.get('municipalityCode') === feature.get('municipalityCode') && feature.get('landArea') === selectedFeature.get('landArea')
-        }))
+        }));
         if (Array.isArray(matchingFeatures) && matchingFeatures.length > 0) {
           select.getFeatures().clear();
-          matchingFeatures.forEach(matchingFeature => select.getFeatures().push(matchingFeature))
+          matchingFeatures.forEach(matchingFeature => select.getFeatures().push(matchingFeature));
           getFeatureInfo('variableChange', this.map, matchingFeatures).then(featureInfo => {
             this.pop('variableChange', parseFeatureInfo(featureInfo, '', blackList.map));
           })
@@ -458,21 +483,51 @@ class Map extends Component {
 
   saveArea = name => {
     const savedAreas = this.state.savedAreas;
-    const selection = [...this.state.selection];
+    const sel = _.cloneDeep(this.state.selection);
     let areaToSave = {
       id: savedAreas.length + 1,
       name,
-      selection
-    }
+      "selection": sel
+    };
     if (!savedAreas.some(area => area.name === name)) {
-      this.setState({ savedAreas: [...savedAreas, areaToSave] })
+      this.setState({savedAreas: [...savedAreas, areaToSave]})
     }
-  }
+  };
+
+  saveCustomArea = name => {
+    console.log("Saving?");
+    const savedCustomAreas = this.state.savedCustomAreas;
+    const selection = [...this.state.selection];
+    const sel = _.cloneDeep(this.state.selection);
+    let areaToSave = {
+      id: savedCustomAreas.length + 1,
+      name,
+      "selection": sel,
+      activated: false
+    };
+    if (!savedCustomAreas.some(area => area.name === name)) {
+      this.setState({savedCustomAreas: [...savedCustomAreas, areaToSave]});
+    }
+  };
+
+  toggleCustomAreaActivation = (area, state) => {
+    let id = area.id;
+    let savedCustomAreas = this.state.savedCustomAreas;
+    area.activated = state;
+    let otherAreas = savedCustomAreas.filter(area => area.id !== id);
+    this.setState({savedCustomAreas: [...otherAreas, area]});
+  };
 
   deleteArea = id => {
     let savedAreas = this.state.savedAreas.filter(area => area.id !== id);
-    this.setState({ savedAreas })
-  }
+    this.setState({savedAreas})
+  };
+
+  deleteCustomArea = id => {
+    let savedCustomAreas = this.state.savedCustomAreas.filter(area => area.id !== id);
+    let selection = [...this.state.selection];
+    this.setState({savedCustomAreas}, () => this.changeMuns(selection));
+  };
 
   relateToArea = event => {
     if (this.state.selectedLayer) {
@@ -485,102 +540,106 @@ class Map extends Component {
         this.prepareStyle(layer, features, this.state.variable);
       });
     }
-  }
+  };
 
   render() {
 
     return (
-      <div>
-        <div ref={node => this.mapDiv = node} style={{ height: '100vh', overflowY: 'hidden', overflowX: 'hidden' }} />
-        {this.state.loading && <Spinner />}
-        {this.state.selectedLayer && <Legend
-          statisticYear={this.props.statisticYear}
-          layerDrawerVisibility={this.props.layerDrawerVisibility}
-          selectedLayer={this.state.selectedLayer}
-          opacity={this.state.layerOpacity}
-          variable={this.state.variable}
-          direction='left-to-right'
-          fieldAliases={fieldAliases}
-          loading={this.props.loading}
-        >
-        </Legend>}
-        <SearchDialog
-          searchDialogVisibility={this.props.searchDialogVisibility}
-          toggleSearch={this.props.toggleSearch}
-          handleClick={this.filterClick}
-          filter={this.state.filter}
-        />
-        {!this.props.showPrintDialog &&
+        <div>
+          <div ref={node => this.mapDiv = node} style={{height: '100vh', overflowY: 'hidden', overflowX: 'hidden'}}/>
+          {this.state.loading && <Spinner/>}
+          {this.state.selectedLayer && <Legend
+              statisticYear={this.props.statisticYear}
+              layerDrawerVisibility={this.props.layerDrawerVisibility}
+              selectedLayer={this.state.selectedLayer}
+              opacity={this.state.layerOpacity}
+              variable={this.state.variable}
+              direction='left-to-right'
+              fieldAliases={fieldAliases}
+              loading={this.props.loading}
+          >
+          </Legend>}
+          <SearchDialog
+              searchDialogVisibility={this.props.searchDialogVisibility}
+              toggleSearch={this.props.toggleSearch}
+              handleClick={this.filterClick}
+              filter={this.state.filter}
+          />
+          {!this.props.showPrintDialog &&
           <Hidden xsDown>
-            <ZoomIn handleClick={() => this.zoom('in')} />
-            <ZoomOut handleClick={() => this.zoom('out')} />
+            <ZoomIn handleClick={() => this.zoom('in')}/>
+            <ZoomOut handleClick={() => this.zoom('out')}/>
           </Hidden>
-        }
-        {this.state.featureInfo && this.state.featureInfo !== '' &&
+          }
+          {this.state.featureInfo && this.state.featureInfo !== '' &&
           <MapPopover
-            featureInfo={this.state.featureInfo}
-            open={this.state.popOpen}
-            X={this.state.popX}
-            Y={this.state.popY}
-            pop={this.pop}
-            timeField={this.props.selectedLayer ? this.props.selectedLayer.style.timeField : null}
-            time={this.props.time}
-            field={this.props.selectedLayer ? this.props.selectedLayer.style.fieldSelection && this.props.selectedLayer.style.fieldSelection !== '' && this.props.selectedLayer.style.fieldSelection : 'all'}
-            fieldAliases={fieldAliases}
+              featureInfo={this.state.featureInfo}
+              open={this.state.popOpen}
+              X={this.state.popX}
+              Y={this.state.popY}
+              pop={this.pop}
+              timeField={this.props.selectedLayer ? this.props.selectedLayer.style.timeField : null}
+              time={this.props.time}
+              field={this.props.selectedLayer ? this.props.selectedLayer.style.fieldSelection && this.props.selectedLayer.style.fieldSelection !== '' && this.props.selectedLayer.style.fieldSelection : 'all'}
+              fieldAliases={fieldAliases}
           />
-        }
-        {this.state.featureInfo && this.state.featureInfo !== '' &&
+          }
+          {this.state.featureInfo && this.state.featureInfo !== '' &&
           <InfoDrawer
-            toggleInfoDrawer={this.props.toggleInfoDrawer}
-            open={this.props.infoDrawerVisibility}
-            featureInfo={this.state.featureInfo}
-            timeField={this.props.selectedLayer ? this.props.selectedLayer.style.timeField : null}
-            time={this.props.time}
-            timeVisibility={this.props.timeVisibility}
-            user={this.props.user}
-            chartVisibility={this.props.chartVisibility}
-            statistics={['sum', 'min', 'max', 'mean', 'median']}
-            statisticYear={this.props.statisticYear}
-            fieldAliases={fieldAliases}
-            field={this.props.selectedLayer ? this.props.selectedLayer.style.fieldSelection && this.props.selectedLayer.style.fieldSelection !== '' && this.props.selectedLayer.style.fieldSelection : 'all'}
+              toggleInfoDrawer={this.props.toggleInfoDrawer}
+              open={this.props.infoDrawerVisibility}
+              featureInfo={this.state.featureInfo}
+              timeField={this.props.selectedLayer ? this.props.selectedLayer.style.timeField : null}
+              time={this.props.time}
+              timeVisibility={this.props.timeVisibility}
+              user={this.props.user}
+              chartVisibility={this.props.chartVisibility}
+              statistics={['sum', 'min', 'max', 'mean', 'median']}
+              statisticYear={this.props.statisticYear}
+              fieldAliases={fieldAliases}
+              field={this.props.selectedLayer ? this.props.selectedLayer.style.fieldSelection && this.props.selectedLayer.style.fieldSelection !== '' && this.props.selectedLayer.style.fieldSelection : 'all'}
           />
-        }
-        {this.props.munRegFeatures &&
+          }
+          {this.props.munRegFeatures &&
           <LayerDrawer
-            addLayerToDB={this.addLayerToDB}
-            editLayerInDB={this.editLayerInDB}
-            deleteLayerFromDB={this.deleteLayerFromDB}
-            layerDrawerVisibility={this.props.layerDrawerVisibility}
-            map={this.state.map}
-            basemap={this.state.basemap}
-            changeBasemap={this.changeBasemap}
-            basemapOpacity={this.state.basemapOpacity}
-            changeBasemapOpacity={this.changeBasemapOpacity}
-            layers={this.props.layers}
-            filter={this.state.filter}
-            setSelection={this.setSelection}
-            selectedLayer={this.state.selectedLayer} // changed here from this.props.selectedLayer
-            layerOpacity={this.state.layerOpacity}
-            changeLayerOpacity={this.changeLayerOpacity}
-            changeMuns={this.changeMuns}
-            saveArea={this.saveArea}
-            savedAreas={this.state.savedAreas}
-            selection={this.state.selection}
-            handleDelete={this.deleteArea}
-            features={this.props.munRegFeatures}
-            statisticsList={this.props.statisticsList}
-            changeOwnSelection={this.changeOwnSelection}
-            handleStatisticSelection={this.props.handleStatisticSelection}
-            handleChangeStatisticYear={this.props.handleChangeStatisticYear}
-            statisticYears={this.props.statisticYears}
-            statisticYear={this.props.statisticYear}
-            emptyMap={this.emptyMap}
-            relateToArea={this.relateToArea}
-            relativeToArea={this.state.relativeToArea}
+              addLayerToDB={this.addLayerToDB}
+              editLayerInDB={this.editLayerInDB}
+              deleteLayerFromDB={this.deleteLayerFromDB}
+              layerDrawerVisibility={this.props.layerDrawerVisibility}
+              map={this.state.map}
+              basemap={this.state.basemap}
+              changeBasemap={this.changeBasemap}
+              basemapOpacity={this.state.basemapOpacity}
+              changeBasemapOpacity={this.changeBasemapOpacity}
+              layers={this.props.layers}
+              filter={this.state.filter}
+              setSelection={this.setSelection}
+              selectedLayer={this.state.selectedLayer} // changed here from this.props.selectedLayer
+              layerOpacity={this.state.layerOpacity}
+              changeLayerOpacity={this.changeLayerOpacity}
+              changeMuns={this.changeMuns}
+              saveArea={this.saveArea}
+              saveCustomArea={this.saveCustomArea}
+              toggleCustomAreaActivation={this.toggleCustomAreaActivation}
+              savedAreas={this.state.savedAreas}
+              savedCustomAreas={this.state.savedCustomAreas}
+              selection={this.state.selection}
+              handleDelete={this.deleteArea}
+              handleCustomAreaDelete={this.deleteCustomArea}
+              features={this.props.munRegFeatures}
+              statisticsList={this.props.statisticsList}
+              changeOwnSelection={this.changeOwnSelection}
+              handleStatisticSelection={this.props.handleStatisticSelection}
+              handleChangeStatisticYear={this.props.handleChangeStatisticYear}
+              statisticYears={this.props.statisticYears}
+              statisticYear={this.props.statisticYear}
+              emptyMap={this.emptyMap}
+              relateToArea={this.relateToArea}
+              relativeToArea={this.state.relativeToArea}
           />}
-      </div>
+        </div>
     );
   }
-};
+}
 
 export default Map;

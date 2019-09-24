@@ -51,6 +51,7 @@ class LayerDrawer extends Component {
   state = {
     expanded: 'panel1',
     areaName: '',
+    customAreaName: '',
     seaSelection: 'false',
     yearSelection: '2019',
     scaleSelection: '4500000'
@@ -81,9 +82,22 @@ class LayerDrawer extends Component {
     this.setState({areaName: event.target.value})
   };
 
+  changeCustomAreaName = event => this.setState({customAreaName: event.target.value});
+
   activateSelection = selection => {
     this.catRef.activateSelection(selection);
     this.props.changeMuns(selection);
+  };
+
+  toggleCustomAreaSelection = area => {
+    let selection = [...area.selection];
+    if (!area.activated) {
+      this.catRef.addToSelection(selection);
+      this.props.toggleCustomAreaActivation(area, true);
+    } else {
+      this.catRef.deactivateSelection(selection);
+      this.props.toggleCustomAreaActivation(area, false);
+    }
   };
 
   /* Handle user's own selection radio button changes */
@@ -98,6 +112,7 @@ class LayerDrawer extends Component {
       this.props.changeOwnSelection(stats);
     });
   };
+
 
   render() {
 
@@ -203,11 +218,17 @@ class LayerDrawer extends Component {
                         <SavedAreaCatalog
                             txt={txt}
                             savedAreas={this.props.savedAreas}
+                            savedCustomAreas={this.props.savedCustomAreas}
                             handleDelete={this.props.handleDelete}
+                            handleCustomAreaDelete={this.props.handleCustomAreaDelete}
                             activateSelection={this.activateSelection}
+                            toggleCustomAreaSelection={this.toggleCustomAreaSelection}
                             areaName={this.state.areaName}
+                            customAreaName={this.state.customAreaName}
                             changeName={this.changeName}
+                            changeCustomAreaName={this.changeCustomAreaName}
                             saveArea={this.props.saveArea}
+                            saveCustomArea={this.props.saveCustomArea}
                         />
                       </div>
                     </ExpansionPanelDetails>

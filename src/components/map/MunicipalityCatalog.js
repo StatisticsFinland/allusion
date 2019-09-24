@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React, {Component} from 'react';
+import {withStyles} from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -10,7 +10,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import Chip from '@material-ui/core/Chip';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
+import * as _ from 'lodash';
 
 const styles = theme => ({
     root: {
@@ -94,6 +94,18 @@ class MunicipalityCatalog extends Component {
             }
         })
         this.setState({ munids, regids, activeRegions });
+    }
+
+    addToSelection = muns => {
+        let munids = _.union(this.state.munids, muns);
+        this.activateSelection(munids);
+        this.setState({munids}, () => this.props.changeMuns(munids));
+    };
+
+    deactivateSelection = muns => {
+        let munids = _.difference(this.state.munids, muns);
+        this.activateSelection(munids);
+        this.setState({munids}, () => this.props.changeMuns(munids));
     }
 
     addRemoveMunid = (features, munid) => {
