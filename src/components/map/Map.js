@@ -30,6 +30,7 @@ import {numericSort} from 'simple-statistics'
 import chroma from 'chroma-js';
 import Legend from './Legend';
 import calculateUnionAggregate from "./functions/calculateUnionAggregate";
+import uuid from "./functions/uuid";
 
 
 let interactions = defaultInteractions({altShiftDragRotate: false, pinchRotate: false});
@@ -483,11 +484,11 @@ class Map extends Component {
 
   saveArea = name => {
     const savedAreas = this.state.savedAreas;
-    const sel = _.cloneDeep(this.state.selection);
+    const selection = [...this.state.selection];
     let areaToSave = {
-      id: savedAreas.length + 1,
+      id: uuid(),
       name,
-      "selection": sel
+      selection
     };
     if (!savedAreas.some(area => area.name === name)) {
       this.setState({savedAreas: [...savedAreas, areaToSave]})
@@ -495,14 +496,13 @@ class Map extends Component {
   };
 
   saveCustomArea = name => {
-    console.log("Saving?");
     const savedCustomAreas = this.state.savedCustomAreas;
     const selection = [...this.state.selection];
-    const sel = _.cloneDeep(this.state.selection);
     let areaToSave = {
-      id: savedCustomAreas.length + 1,
+      id: uuid(),
+      "order": savedCustomAreas.length + 1,
       name,
-      "selection": sel,
+      selection,
       activated: false
     };
     if (!savedCustomAreas.some(area => area.name === name)) {

@@ -1,4 +1,3 @@
-/* Turf TODO: use only needed modules */
 import union from '@turf/union'
 import combine from '@turf/combine'
 import GeoJSON from "ol/format/GeoJSON";

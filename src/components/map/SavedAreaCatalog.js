@@ -37,8 +37,8 @@ class SavedAreaCatalog extends Component {
         <div>
           <div style={{display: 'flex', flexDirection: 'column'}}>
 
-            {savedCustomAreas.sort((a, b) => a - b).map(area => {
-              return <div style={{display: 'flex'}}>
+            {savedCustomAreas.sort((a, b) => a.order - b.order).map(area => {
+              return <div key={`div_${area.id}`} style={{display: 'flex'}}>
                 <Checkbox key={`checkbox_${area.id}`}
                           color='primary'
                           style={{paddingTop: 4, paddingBottom: 4}}
@@ -48,7 +48,7 @@ class SavedAreaCatalog extends Component {
                 </Checkbox>
                 <ListItem
                     className={classes.first}
-                    key={area.id}
+                    key={`listitem_${area.id}`}
                     dense
                     button
                     disableGutters={true}
@@ -56,11 +56,11 @@ class SavedAreaCatalog extends Component {
                     aria-controls="placesearch"
                     aria-label="Valitse kunta"
                     onClick={() => null}
-                    onDoubleClick={() => console.log("DOUBLE CLICK!!")}>
+                    onDoubleClick={() => null}>
                   <ListItemText key={`listitemtext_${area.id}`} primary={area.name}/>
                   <Chip
                       clickable
-                      key={area.id}
+                      key={`chip_${area.id}`}
                       onDelete={() => this.props.handleCustomAreaDelete(area.id)}
                       color="primary"
                       size="small"
@@ -79,7 +79,8 @@ class SavedAreaCatalog extends Component {
           </div>
           <Button color='primary'
                   onClick={() => this.props.saveCustomArea(customAreaName)}>{txt.button.saveNew}</Button>
-          <Divider></Divider>
+
+          <Divider/>
           <div style={{display: 'flex', flexDirection: 'column'}}>
             {savedAreas.map(area => {
               return <Chip
