@@ -422,6 +422,7 @@ class Map extends Component {
   };
 
   addFeaturesToMap = (response) => {
+    const statisticalVariable = this.state.variable;
     const features = response.features;
     const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'SparQL');
     let source = layer.getSource();
@@ -444,7 +445,7 @@ class Map extends Component {
               .map(selection => {
                 // TODO: Modify if wanted to have municipality in multiple areas
                 let customAreaFeatures = features.filter(feature => _.includes(selection, feature.get('municipalityCode')));
-                let customAreaFeature = calculateUnionAggregate(customAreaFeatures);
+                let customAreaFeature = calculateUnionAggregate(customAreaFeatures, statisticalVariable);
                 if (customAreaFeature) {
                   source.addFeature(customAreaFeature);
                 }
@@ -474,7 +475,7 @@ class Map extends Component {
           })
         }
       }
-      this.prepareStyle(layer, features, this.state.variable)
+      this.prepareStyle(layer, [...source.getFeatures()], statisticalVariable);
     })
   };
 
@@ -503,6 +504,7 @@ class Map extends Component {
       "order": savedCustomAreas.length + 1,
       name,
       selection,
+      beingModified: false,
       activated: false
     };
     if (!savedCustomAreas.some(area => area.name === name)) {
