@@ -1,6 +1,7 @@
-var request = require('request');
 import WKT from 'ol/format/WKT.js';
-import { EPSG3067 } from './components/map/projection/projections';
+import {EPSG3067} from './components/map/projection/projections';
+
+var request = require('request');
 
 let blacklist = ['properties', 'geom', 'thegeom', 'GEOM', 'WKT', 'wkt', 'Wkt', 'geometry', 'the_geom', 'geog'];
 

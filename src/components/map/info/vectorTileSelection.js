@@ -1,3 +1,5 @@
+import dragBox from './dragBox';
+
 const vectorTileSelection = (map, layers) => {
 
   let selectionLayer = layers;
@@ -11,9 +13,9 @@ const vectorTileSelection = (map, layers) => {
 
   // clear selection when drawing a new box and when clicking on the map
   dragBox.on('boxstart', () => {
-   // selectionLayer = layer;
+    // selectionLayer = layer;
   });
 
-}
+};
 
 export default vectorTileSelection;

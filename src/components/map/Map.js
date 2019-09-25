@@ -379,8 +379,8 @@ class Map extends Component {
       });
 
       style.fieldValues = calculateBreaks(values, numClasses, 'ckmeans');
-      style.fill = colors,
-          style.stroke = 'rgba(0,115,176,0.66)';
+      style.fill = colors;
+      style.stroke = 'rgba(0,115,176,0.66)';
 
     }
 

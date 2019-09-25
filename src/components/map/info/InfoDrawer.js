@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React, {Component} from 'react';
+import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import { isNumeric, formatNum, blackList, stableSort, getSorting, separateThousands } from '../../../globals';
+import {blackList, formatNum, getSorting, isNumeric, separateThousands, stableSort} from '../../../globals';
 import Drawer from '@material-ui/core/Drawer';
-import { LanguageContext } from './../../../App';
-import { min, max, mean, median, sum } from 'simple-statistics'
+import {LanguageContext} from './../../../App';
+import {max, mean, median, min, sum} from 'simple-statistics'
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -74,7 +74,6 @@ const styles = theme => ({
     },
     tableCellHead3: {
         fontSize: '0.75rem',
-        position: '-webkit-sticky',
         position: 'sticky',
         top: 0,
         backgroundColor: theme.palette.background.paper
@@ -266,10 +265,12 @@ class InfoDrawer extends Component {
     };
 
     populate = (featureInfo, txt) => {
-
         let layers = [];
+      let content = [];
+      const {classes} = this.props;
 
         featureInfo && featureInfo.map((feature, index) => {
+
 
             content.push(
                 <div key={`InfoDrawer_${index}`} className={classes.infodiv}>
@@ -281,6 +282,7 @@ class InfoDrawer extends Component {
             )
             !layers.includes(feature.LAYERTITLE) && layers.push(feature.LAYERTITLE);
         })
+      return content;
     }
 
     render() {

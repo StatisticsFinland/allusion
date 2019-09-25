@@ -9,7 +9,6 @@ const RegionController = {
       method: 'POST',
       body: new URLSearchParams(`query=${sparqlQuery}`),
       headers: new Headers({
-        'Content-Type': 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded'
       })
     });
