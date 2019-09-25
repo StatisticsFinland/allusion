@@ -6,6 +6,8 @@ import * as _ from 'lodash';
 
 /* Function to calculate aggregated  of the features */
 const calculateAggregatedProperties = (features, statisticalField) => {
+  let statField = statisticalField.replace("_km2", "");
+
   let allProperties = _.reduce(_.map(features, f => f.getProperties()), (result, value) => {
     _.forOwn(value, (propVal, propKey) => {
       if (propKey !== 'geometry') {
@@ -20,7 +22,7 @@ const calculateAggregatedProperties = (features, statisticalField) => {
 
   let properties = _.reduce(allProperties, (res, propVals, propKey) => {
     if (propVals.length) {
-      if (propKey === 'landArea' || propKey === statisticalField) {
+      if (propKey === 'landArea' || propKey === statField) {
         const numVals = _.filter(propVals, v => !isNaN(v));
         res[propKey] = numVals.length ? _.reduce(numVals, (r, v) => r + parseFloat(v), 0.0) : propVals[0];
       } else {
@@ -30,11 +32,10 @@ const calculateAggregatedProperties = (features, statisticalField) => {
     return res;
   }, {});
 
-
-  if (properties[statisticalField] && properties['landArea']) {
-    properties[statisticalField + "_km2"] = properties[statisticalField] / properties['landArea'];
-  } else if (properties[statisticalField] === null) {
-    properties[statisticalField + "_km2"] = null;
+  if (properties[statField] && properties['landArea']) {
+    properties[statField + "_km2"] = properties[statField] / properties['landArea'];
+  } else if (properties[statField] === null) {
+    properties[statField + "_km2"] = null;
   }
 
   //TODO: Include the original properties
