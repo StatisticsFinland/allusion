@@ -237,22 +237,7 @@ class Map extends Component {
     const features = layer.getSource().getFeatures();
     getFeatureInfo(null, this.map).then(featureInfo => {
       if (selectedFeatures) {
-        let selectionArray;
-        if (Array.isArray(selectedFeatures)) {
-          selectionArray = selectedFeatures;
-        } else if (typeof selectedFeatures === 'object') {
-          selectionArray = selectedFeatures.getArray();
-        }
-        let matchingFeatures = features.filter(feature => selectionArray.some(selectedFeature => {
-          return selectedFeature.get('municipalityCode') === feature.get('municipalityCode') && feature.get('landArea') === selectedFeature.get('landArea')
-        }));
-        if (Array.isArray(matchingFeatures) && matchingFeatures.length > 0) {
-          select.getFeatures().clear();
-          matchingFeatures.forEach(matchingFeature => select.getFeatures().push(matchingFeature));
-          getFeatureInfo('variableChange', this.map, matchingFeatures).then(featureInfo => {
-            this.pop('variableChange', parseFeatureInfo(featureInfo, '', blackList.map));
-          })
-        }
+        this.handleSelectedFeatures(features);
       } else {
         this.setState({featureInfo: parseFeatureInfo(featureInfo, '', blackList.map)}, () => {
           pop && this.props.toggleInfoDrawer(true)
@@ -458,26 +443,30 @@ class Map extends Component {
       }
 
       if (selectedFeatures) {
-        let selectionArray;
-        if (Array.isArray(selectedFeatures)) {
-          selectionArray = selectedFeatures;
-        } else if (typeof selectedFeatures === 'object') {
-          selectionArray = selectedFeatures.getArray();
-        }
-        let matchingFeatures = features.filter(feature => selectionArray.some(selectedFeature => {
-          return selectedFeature.get('municipalityCode') === feature.get('municipalityCode') && feature.get('landArea') === selectedFeature.get('landArea')
-        }));
-        if (Array.isArray(matchingFeatures) && matchingFeatures.length > 0) {
-          select.getFeatures().clear();
-          matchingFeatures.forEach(matchingFeature => select.getFeatures().push(matchingFeature));
-          getFeatureInfo('variableChange', this.map, matchingFeatures).then(featureInfo => {
-            this.pop('variableChange', parseFeatureInfo(featureInfo, '', blackList.map));
-          })
-        }
+        this.handleSelectedFeatures(features);
       }
       this.prepareStyle(layer, [...source.getFeatures()], statisticalVariable);
     })
   };
+
+  handleSelectedFeatures = features => {
+    let selectionArray;
+    if (Array.isArray(selectedFeatures)) {
+      selectionArray = selectedFeatures;
+    } else if (typeof selectedFeatures === 'object') {
+      selectionArray = selectedFeatures.getArray();
+    }
+    let matchingFeatures = features.filter(feature => selectionArray.some(selectedFeature => {
+      return selectedFeature.get('municipalityCode') === feature.get('municipalityCode') && feature.get('landArea') === selectedFeature.get('landArea')
+    }));
+    if (Array.isArray(matchingFeatures) && matchingFeatures.length > 0) {
+      select.getFeatures().clear();
+      matchingFeatures.forEach(matchingFeature => select.getFeatures().push(matchingFeature));
+      getFeatureInfo('variableChange', this.map, matchingFeatures).then(featureInfo => {
+        this.pop('variableChange', parseFeatureInfo(featureInfo, '', blackList.map));
+      })
+    }
+  }
 
   emptyMap = () => {
     this.changeMuns([]);

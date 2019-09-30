@@ -1,17 +1,15 @@
 import React from 'react';
-import { unstable_useMediaQuery as useMediaQuery } from '@material-ui/core/useMediaQuery';
+import {unstable_useMediaQuery as useMediaQuery} from '@material-ui/core/useMediaQuery';
 import Drawer from '@material-ui/core/Drawer';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import SearchButton from './SearchButton';
 import InfoButton from './InfoButton';
 import LanguageButton from './LanguageButton';
 import TableButton from './TableButton';
 import LabelButton from './LabelButton';
 import Hidden from '@material-ui/core/Hidden';
-
-
 /*import { UserContext } from '../../App';*/
-import { LanguageContext } from './../../App';
+import {LanguageContext} from './../../App';
 
 const styles = theme => ({
     paper: {
@@ -22,8 +20,6 @@ const styles = theme => ({
         background: 'none',
         border: 'none',
         height: 'auto',
-        maxHeight: '-webkit-fit-content',
-        maxHeight: '-moz-fit-content',
         maxHeight: 'fit-content',
         top: '1rem',
         justifyContent: 'center',
