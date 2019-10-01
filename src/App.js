@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Map from './components/map/Map';
-import { dark, light } from './Theme';
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import {dark, light} from './Theme';
+import {MuiThemeProvider} from '@material-ui/core/styles';
 import Hidden from '@material-ui/core/Hidden';
 
 import Toolbar from './components/toolbar/Toolbar';
@@ -13,14 +13,12 @@ import InfoDialog from './components/info/InfoDialog';
 
 import RegionController from './controllers/RegionController';
 import StatisticsController from './controllers/StatisticsController';
-import { statisticList as STATISTIC_LIST } from './globals';
-
+import {statisticList as STATISTIC_LIST} from './globals';
 /* SPARQL queries */
 import QueryGenerator from './queries/QueryGenerator';
 import executeQuery from './SparQL';
-
 /* Localization */
-import { languages, defaultLanguage } from './components/localization/languages';
+import {defaultLanguage, languages} from './components/localization/languages';
 import translate from './components/localization/translate';
 import translations from './components/localization/translations.json'
 
@@ -84,7 +82,7 @@ class App extends Component {
 
   /* Get statistics from Tilastokeskus via SPARQL */
   getSparQL = () => {
-    this.setState({ loading: true })
+    this.setState({loading: true});
     const queryParams = {
       statistics: this.state.statDataValues,
       munips: this.state.selectedMunips,
@@ -178,7 +176,7 @@ class App extends Component {
   handleStatisticSelection = (statisticCode) => {
     this.setState({ statisticCode }, () => {
       this.handleGetTKStatistics(this.state.language, this.state.statSettings.year, this.state.selectedMunips, this.state.statisticCode, this.state.statisticYear).then(() => {
-        this.mapRef.setVariable(this.state.statisticsList.find(stat => stat.code === statisticCode).text)
+        this.mapRef.setVariable(this.state.statisticsList.find(stat => stat.code === statisticCode).text);
         this.getSparQL();
       });
     })
@@ -190,7 +188,7 @@ class App extends Component {
         this.getSparQL();
       });
     })
-  }
+  };
 
   /* Fetch new statistics based on user's selected municipalities */
   handleSelectingMunips = (selectedMunips) => {
@@ -217,7 +215,7 @@ class App extends Component {
   toggleLabels = () => {
     const labels = this.state.labels;
     this.setState({ labels: !labels }, () => this.mapRef.switchLabels())
-  }
+  };
 
   /* Toggle alert */
   alertClose = () => this.setState({ showAlert: false });
@@ -252,30 +250,25 @@ class App extends Component {
     this.languageChangeOperations(defaultLanguage);
   };
 
-  handleGetAreas = (language) => {
+  handleGetAreas = async (language) => {
     /* Fetch regions and municipalities from MML endpoint for LayerDrawer */
-    RegionController.getRegionsAndMunicipalities(QueryGenerator.regionMunQuery(language, '2019')).then(res => {
-      if (res.ok) {
-        res.json().then(json => {
-          const munRegFeatures = json.results.bindings.map(item => {
-            return {
-              'firstCode': item.municipalityCode.value,
-              'first': item.municipalityName.value,
-              'secondCode': item.regionCode.value,
-              'second': item.regionName.value,
-              "secondNUTS": item.regionNUTS.value.split('.')[3],
-              "third": item.areaName.value,
-              "thirdCode": item.areaCode.value,
-              "thirdNUTS": item.areaNUTS.value.split('.')[3]
-            };
-          });
-          this.setState({ munRegFeatures });
-        });
+    let promises = [
+      RegionController.getRegionsAndMunicipalities(QueryGenerator.regionMunQuery(language, '2019')),
+      RegionController.getGeometriesForMunicipalities(QueryGenerator.regionMunGeomQuery('2019'))
+    ];
 
-      } else {
-        console.log('Error while fetching regions / municipalities from MML');
-      }
-    });
+    const jsons = await Promise.all(
+        promises.map(promise => promise.then(res => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            console.log('Error while fetching geometries for municipalities from MML');
+            return Promise.reject();
+          }
+        }))
+    );
+    const munRegFeatures = RegionController.parseRegionsAndMunicipalities(jsons);
+    this.setState({munRegFeatures});
   };
 
   render() {
@@ -359,6 +352,6 @@ class App extends Component {
       </MuiThemeProvider>
     );
   };
-};
+}
 
 export { App, AlertContext, LanguageContext };

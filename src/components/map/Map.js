@@ -406,6 +406,15 @@ class Map extends Component {
     this.state.selectedLayer && this.prepareStyle(layer, features, this.state.variable);
   };
 
+  addRegMuns = (regMuns) => {
+    let ret = false;
+    if (regMuns) {
+      ret = true;
+    }
+    return ret;
+  };
+
+
   addFeaturesToMap = (response) => {
     const statisticalVariable = this.state.variable;
     const features = response.features;
@@ -591,7 +600,7 @@ class Map extends Component {
               field={this.props.selectedLayer ? this.props.selectedLayer.style.fieldSelection && this.props.selectedLayer.style.fieldSelection !== '' && this.props.selectedLayer.style.fieldSelection : 'all'}
           />
           }
-          {this.props.munRegFeatures &&
+          {this.addRegMuns(this.props.munRegFeatures) &&
           <LayerDrawer
               addLayerToDB={this.addLayerToDB}
               editLayerInDB={this.editLayerInDB}
@@ -617,7 +626,7 @@ class Map extends Component {
               selection={this.state.selection}
               handleDelete={this.deleteArea}
               handleCustomAreaDelete={this.deleteCustomArea}
-              features={this.props.munRegFeatures}
+              features={this.props.munRegFeatures.map(mun => mun.getProperties())}
               statisticsList={this.props.statisticsList}
               changeOwnSelection={this.changeOwnSelection}
               handleStatisticSelection={this.props.handleStatisticSelection}
