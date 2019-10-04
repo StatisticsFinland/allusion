@@ -99,6 +99,10 @@
         "no": [
             "No",
             "Ei"
+        ],
+      "showMuniBorders": [
+        "Show municipality borders",
+        "Näytä kuntarajat"
         ]
     },
     "button": {

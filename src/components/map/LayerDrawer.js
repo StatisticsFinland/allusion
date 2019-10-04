@@ -271,6 +271,9 @@ class LayerDrawer extends Component {
                           basemapOpacity={this.props.basemapOpacity}
                           changeBasemap={this.props.changeBasemap}
                           changeBasemapOpacity={this.props.changeBasemapOpacity}
+                          municipalityBordersVisible={this.props.municipalityBordersVisible}
+                          toggleMunicipalityVisibility={this.props.toggleMunicipalityVisibility}
+                          txt={txt}
                       />
                     </ExpansionPanelDetails>
                   </ExpansionPanel>

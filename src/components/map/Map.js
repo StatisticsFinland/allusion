@@ -50,8 +50,8 @@ class Map extends Component {
     basemapOpacity: 0.75,
     filter: {
       layer: FinMun,
-      first: 'nimi',
-      second: 'nimi_2',
+      first: 'first',
+      second: 'second',
     },
     zoomFactor: 0.1,
     layerOpacity: 1,
@@ -67,7 +67,8 @@ class Map extends Component {
     savedCustomAreas: [],
     variable: '',
     selectedLayer: null,
-    relativeToArea: false
+    relativeToArea: false,
+    municipalityBordersVisible: false
   };
 
   view = new View({
@@ -297,7 +298,7 @@ class Map extends Component {
   filterClick = (option, address = null) => {
     if (!address) {
       let target = this.state.filter.layer.getSource().getFeatures().find(item => item.get(this.state.filter.first) === option);
-      this.view.setCenter(target.getGeometry().getCoordinates());
+      this.view.fit(target.getGeometry());
       this.view.setZoom(9);
     } else {
       this.view.setCenter(transform(option, 'EPSG:4326', srs));
@@ -410,15 +411,26 @@ class Map extends Component {
     let ret = false;
     if (regMuns) {
       ret = true;
+      const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'Municipalities');
+      let source = layer.getSource();
+      source.clear();
+      source.addFeatures(regMuns);
     }
     return ret;
+  };
+
+  toggleMunicipalityVisibility = () => {
+    const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'Municipalities');
+    const municipalityBordersVisible = !layer.getVisible();
+    layer.setVisible(municipalityBordersVisible);
+    this.setState({municipalityBordersVisible});
   };
 
 
   addFeaturesToMap = (response) => {
     const statisticalVariable = this.state.variable;
     const features = response.features;
-    const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'SparQL');
+    const layer = this.state.map.getLayers().getArray().find(layer => layer.getProperties().name === 'SparQL');
     let source = layer.getSource();
     source.clear();
 
@@ -475,7 +487,7 @@ class Map extends Component {
         this.pop('variableChange', parseFeatureInfo(featureInfo, '', blackList.map));
       })
     }
-  }
+  };
 
   emptyMap = () => {
     this.changeMuns([]);
@@ -509,6 +521,7 @@ class Map extends Component {
       this.setState({savedCustomAreas: [...savedCustomAreas, areaToSave]});
     }
   };
+
 
   toggleCustomAreaActivation = (area, state) => {
     let id = area.id;
@@ -611,6 +624,8 @@ class Map extends Component {
               changeBasemap={this.changeBasemap}
               basemapOpacity={this.state.basemapOpacity}
               changeBasemapOpacity={this.changeBasemapOpacity}
+              toggleMunicipalityVisibility={this.toggleMunicipalityVisibility}
+              municipalityBordersVisible={this.state.municipalityBordersVisible}
               layers={this.props.layers}
               filter={this.state.filter}
               setSelection={this.setSelection}
