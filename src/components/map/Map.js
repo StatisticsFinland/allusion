@@ -549,12 +549,25 @@ class Map extends Component {
     }
   };
 
-
   toggleCustomAreaActivation = (area, state) => {
     let id = area.id;
-    let savedCustomAreas = this.state.savedCustomAreas;
+    let savedCustomAreas = [...this.state.savedCustomAreas];
     area.activated = state;
     let otherAreas = savedCustomAreas.filter(area => area.id !== id);
+    if (state) {
+      // Deactivate the custom areas with same municipalities
+      let munisToDeselct = [];
+      otherAreas.forEach(area2 => {
+        if (area2.activated && _.intersection(area.selection, area2.selection).length) {
+          area2.activated = false;
+          munisToDeselct = _.union(munisToDeselct, _.difference(area2.selection, area.selection));
+        }
+      });
+      if (munisToDeselct.length) {
+        this.drawerRef.catRef.removeFromSelection(munisToDeselct);
+      }
+    }
+
     this.setState({savedCustomAreas: [...otherAreas, area]});
   };
 
