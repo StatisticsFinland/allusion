@@ -52,6 +52,7 @@ class LayerDrawer extends Component {
     expanded: 'panel1',
     areaName: '',
     customAreaName: '',
+    customAreaModifiedName: '',
     seaSelection: 'false',
     yearSelection: '2019',
     scaleSelection: '4500000'
@@ -86,7 +87,9 @@ class LayerDrawer extends Component {
     this.setState({areaName: event.target.value})
   };
 
-  changeCustomAreaName = event => this.setState({customAreaName: event.target.value});
+  changeCustomAreaName = name => this.setState({customAreaName: name});
+
+  changeCustomAreaModifiedName = name => this.setState({customAreaModifiedName: name});
 
   activateSelection = selection => {
     this.catRef.activateSelection(selection);
@@ -223,6 +226,8 @@ class LayerDrawer extends Component {
                             txt={txt}
                             savedAreas={this.props.savedAreas}
                             savedCustomAreas={this.props.savedCustomAreas}
+                            modifyCustomArea={this.props.modifyCustomArea}
+                            saveCustomAreaModification={this.props.saveCustomAreaModification}
                             handleDelete={this.props.handleDelete}
                             handleCustomAreaDelete={this.props.handleCustomAreaDelete}
                             activateSelection={this.activateSelection}
@@ -231,6 +236,8 @@ class LayerDrawer extends Component {
                             customAreaName={this.state.customAreaName}
                             changeName={this.changeName}
                             changeCustomAreaName={this.changeCustomAreaName}
+                            customAreaModifiedName={this.state.customAreaModifiedName}
+                            changeCustomAreaModifiedName={this.changeCustomAreaModifiedName}
                             saveArea={this.props.saveArea}
                             saveCustomArea={this.props.saveCustomArea}
                         />

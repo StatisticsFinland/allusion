@@ -100,9 +100,13 @@
             "No",
             "Ei"
         ],
-      "showMuniBorders": [
-        "Show municipality borders",
-        "Näytä kuntarajat"
+        "showMuniBorders": [
+            "Show municipality borders",
+            "Näytä kuntarajat"
+        ],
+        "saveCustomAreaModification": [
+            "Save",
+            "Tallenna"
         ]
     },
     "button": {

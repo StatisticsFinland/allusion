@@ -16,6 +16,12 @@ const styles = theme => ({
     marginTop: 16,
     paddingBottom: '15px'
   },
+  areaModificationTextFieldInput: {
+    fontSize: 10
+  },
+  areaModificationTextFieldLabel: {
+    fontSize: 10
+  },
   chip: {
     margin: theme.spacing.unit,
     justifyContent: 'space-between'
@@ -28,6 +34,73 @@ const styles = theme => ({
 });
 
 class SavedAreaCatalog extends Component {
+
+
+  startModifyingCustomArea = area => {
+    this.props.changeCustomAreaModifiedName(area.name);
+    this.props.modifyCustomArea(area);
+  };
+
+  populateListItem = area => {
+    if (area.beingModified) {
+      return <>
+        <TextField
+            InputProps={{
+              classes: {
+                input: this.props.classes.areaModificationTextFieldInput
+              }
+            }}
+            InputLabelProps={{
+              classes: {
+                root: this.props.classes.areaModificationTextFieldLabel
+              }
+            }}
+            defaultValue={area.name}
+            onChange={event => this.props.changeCustomAreaModifiedName(event.target.value)}
+            margin="dense"
+            style={{fontSize: 1}}
+            onKeyPress={(ev) => {
+              if (ev.key === 'Enter') {
+                this.props.saveCustomAreaModification(area, this.props.customAreaModifiedName);
+                ev.preventDefault();
+              }
+            }}
+        >
+        </TextField>
+        <Chip
+            clickable
+            key={`chip_${area.id}`}
+            onDelete={() => this.props.handleCustomAreaDelete(area.id)}
+            color="secondary"
+            size="small"
+            label={this.props.txt.igalod.saveCustomAreaModification}
+            onClick={() => this.props.saveCustomAreaModification(area, this.props.customAreaModifiedName)}
+        />
+      </>
+    } else {
+      return <>
+        <ListItemText key={`listitemtext_${area.id}`} primary={area.name}/>
+        <Chip
+            clickable
+            key={`chip_${area.id}`}
+            onClick={() => {
+              this.startModifyingCustomArea(area);
+            }}
+            onDelete={() => this.props.handleCustomAreaDelete(area.id)}
+            color="primary"
+            size="small"
+        />
+      </>
+    }
+
+  };
+
+
+  saveNewCustomArea = name => {
+    this.props.saveCustomArea(name);
+    this.props.changeCustomAreaName("");
+  };
+
 
   render() {
 
@@ -43,6 +116,7 @@ class SavedAreaCatalog extends Component {
                           color='primary'
                           style={{paddingTop: 4, paddingBottom: 4}}
                           checked={area.activated}
+                          disabled={savedCustomAreas.some(area => area.beingModified)}
                           onChange={() => this.props.toggleCustomAreaSelection(area)}>
 
                 </Checkbox>
@@ -56,15 +130,8 @@ class SavedAreaCatalog extends Component {
                     aria-controls="placesearch"
                     aria-label="Valitse kunta"
                     onClick={() => null}
-                    onDoubleClick={() => null}>
-                  <ListItemText key={`listitemtext_${area.id}`} primary={area.name}/>
-                  <Chip
-                      clickable
-                      key={`chip_${area.id}`}
-                      onDelete={() => this.props.handleCustomAreaDelete(area.id)}
-                      color="primary"
-                      size="small"
-                  />
+                    onDoubleClick={() => this.startModifyingCustomArea(area)}>
+                  {this.populateListItem(area)}
                 </ListItem>
               </div>
             })}
@@ -73,12 +140,19 @@ class SavedAreaCatalog extends Component {
                 inputProps={{name: 'customAreaName', id: 'customAreaName'}}
                 label={txt.igalod.newCustomArea}
                 defaultValue={customAreaName}
-                onChange={this.props.changeCustomAreaName}
+                value={customAreaName}
+                onChange={event => this.props.changeCustomAreaName(event.target.value)}
+                onKeyPress={(ev) => {
+                  if (ev.key === 'Enter') {
+                    this.saveNewCustomArea(customAreaName);
+                    ev.preventDefault();
+                  }
+                }}
                 classes={{root: classes.text}}>
             </TextField>
           </div>
           <Button color='primary'
-                  onClick={() => this.props.saveCustomArea(customAreaName)}>{txt.button.saveNew}</Button>
+                  onClick={() => this.saveNewCustomArea(customAreaName)}>{txt.button.saveNew}</Button>
 
           <Divider/>
           <div style={{display: 'flex', flexDirection: 'column'}}>

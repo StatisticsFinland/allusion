@@ -473,7 +473,7 @@ class Map extends Component {
 
       let featuresBelongingToCustomAreas = _.uniq(_.flatten(
           savedCustomAreas
-              .filter(area => area.activated)
+              .filter(area => area.activated && !area.beingModified)
               .map(area => area.selection)
               .map(selection => {
                 // TODO: Modify if wanted to have municipality in multiple areas
@@ -549,6 +549,39 @@ class Map extends Component {
     }
   };
 
+  modifyCustomArea = area => {
+    let id = area.id;
+    let savedCustomAreas = [...this.state.savedCustomAreas];
+    area.beingModified = true;
+    area.activated = true;
+    let otherAreas = savedCustomAreas.filter(area => area.id !== id);
+    // Deactivate other custom areas
+    let munisToDeselect = [];
+    otherAreas.forEach(area2 => {
+      if (area2.activated) {
+        area2.activated = false;
+        munisToDeselect = _.union(munisToDeselect, _.difference(area2.selection, area.selection));
+      }
+    });
+    if (munisToDeselect.length) {
+      this.drawerRef.catRef.removeFromSelection(munisToDeselect);
+    }
+
+    this.setState({savedCustomAreas: [...otherAreas, area]}, () => this.changeMuns(area.selection));
+  };
+
+  saveCustomAreaModification = (area, name) => {
+    let id = area.id;
+    let savedCustomAreas = [...this.state.savedCustomAreas];
+    const selection = [...this.state.selection];
+    area.beingModified = false;
+    area.name = name;
+    area.selection = selection;
+    let otherAreas = savedCustomAreas.filter(area => area.id !== id);
+    this.setState({savedCustomAreas: [...otherAreas, area]}, () => this.changeMuns(selection));
+  };
+
+
   toggleCustomAreaActivation = (area, state) => {
     let id = area.id;
     let savedCustomAreas = [...this.state.savedCustomAreas];
@@ -556,15 +589,15 @@ class Map extends Component {
     let otherAreas = savedCustomAreas.filter(area => area.id !== id);
     if (state) {
       // Deactivate the custom areas with same municipalities
-      let munisToDeselct = [];
+      let munisToDeselect = [];
       otherAreas.forEach(area2 => {
         if (area2.activated && _.intersection(area.selection, area2.selection).length) {
           area2.activated = false;
-          munisToDeselct = _.union(munisToDeselct, _.difference(area2.selection, area.selection));
+          munisToDeselect = _.union(munisToDeselect, _.difference(area2.selection, area.selection));
         }
       });
-      if (munisToDeselct.length) {
-        this.drawerRef.catRef.removeFromSelection(munisToDeselct);
+      if (munisToDeselect.length) {
+        this.drawerRef.catRef.removeFromSelection(munisToDeselect);
       }
     }
 
@@ -676,6 +709,8 @@ class Map extends Component {
               changeMuns={this.changeMuns}
               saveArea={this.saveArea}
               saveCustomArea={this.saveCustomArea}
+              modifyCustomArea={this.modifyCustomArea}
+              saveCustomAreaModification={this.saveCustomAreaModification}
               toggleCustomAreaActivation={this.toggleCustomAreaActivation}
               savedAreas={this.state.savedAreas}
               savedCustomAreas={this.state.savedCustomAreas}
