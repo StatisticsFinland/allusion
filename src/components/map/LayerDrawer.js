@@ -107,6 +107,16 @@ class LayerDrawer extends Component {
     }
   };
 
+  toggleAllCustomAreas = (selectionState) => {
+    let selection = [...this.props.savedCustomAreas.flatMap(area => area.selection)];
+    if (selectionState) {
+      this.catRef.addToSelection(selection);
+    } else {
+      this.catRef.removeFromSelection(selection);
+    }
+    this.props.savedCustomAreas.forEach(area => this.props.toggleCustomAreaActivation(area, selectionState));
+  };
+
   /* Handle user's own selection radio button changes */
   handleRadioChange = event => {
     this.setState({[event.target.name]: event.target.value}, () => {
@@ -238,6 +248,7 @@ class LayerDrawer extends Component {
                             changeCustomAreaName={this.changeCustomAreaName}
                             customAreaModifiedName={this.state.customAreaModifiedName}
                             changeCustomAreaModifiedName={this.changeCustomAreaModifiedName}
+                            toggleAllCustomAreas={this.toggleAllCustomAreas}
                             saveArea={this.props.saveArea}
                             saveCustomArea={this.props.saveCustomArea}
                         />

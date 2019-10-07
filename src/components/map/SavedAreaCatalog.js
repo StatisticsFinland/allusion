@@ -110,6 +110,26 @@ class SavedAreaCatalog extends Component {
         <div>
           <div style={{display: 'flex', flexDirection: 'column'}}>
 
+            {savedCustomAreas.length > 0 &&
+            <div key={`div_all_custom_areas`} style={{display: 'flex'}}>
+              <Checkbox key={`checkbox_all_custom_areas`}
+                        color='primary'
+                        style={{paddingTop: 4, paddingBottom: 4}}
+                        checked={savedCustomAreas.every(area => area.activated)}
+                        disabled={savedCustomAreas.some(area => area.beingModified)}
+                        onChange={() => this.props.toggleAllCustomAreas(savedCustomAreas.some(area => !area.activated))}>
+              </Checkbox>
+              <ListItem
+                  className={classes.first}
+                  key={`listitem_all_custom_areas`}
+                  dense
+                  button
+                  disableGutters={true}
+              >
+                <ListItemText key={`listitemtext_all_custom_areas`} primary={txt.igalod.showAllCustomAreas}/>
+              </ListItem>
+            </div>
+            }
             {savedCustomAreas.sort((a, b) => a.order - b.order).map(area => {
               return <div key={`div_${area.id}`} style={{display: 'flex'}}>
                 <Checkbox key={`checkbox_${area.id}`}

@@ -127,24 +127,27 @@ const executeQuery = (input) => {
 
     const parseFeatures = rawFeatures => {
         const format = new WKT();
-        let wkt = rawFeatures.map(binding => binding.wkt.value) || '';
-        let keys = Object.keys(rawFeatures[0]).map(key => !blacklist.includes(key) && key);
         let features = [];
+        if (rawFeatures.length) {
+            let wkt = rawFeatures.map(binding => binding.wkt.value) || '';
 
-        wkt.forEach(geometry => {
-            features.push(format.readFeature(geometry, {
-                dataProjection: 'EPSG:4326',
-                featureProjection: EPSG3067
-            }));
-        })
+            let keys = Object.keys(rawFeatures[0]).map(key => !blacklist.includes(key) && key);
 
-        features.forEach((feature, index) => {
-            keys.forEach(key => {
-                if (rawFeatures[index][key] !== undefined) {
-                    feature.set(key, !['regionNUTS','areaNUTS'].includes(key) ? rawFeatures[index][key].value : rawFeatures[index][key].value.split('.')[3])
-                }
+            wkt.forEach(geometry => {
+                features.push(format.readFeature(geometry, {
+                    dataProjection: 'EPSG:4326',
+                    featureProjection: EPSG3067
+                }));
             })
-        })
+
+            features.forEach((feature, index) => {
+                keys.forEach(key => {
+                    if (rawFeatures[index][key] !== undefined) {
+                        feature.set(key, !['regionNUTS', 'areaNUTS'].includes(key) ? rawFeatures[index][key].value : rawFeatures[index][key].value.split('.')[3])
+                    }
+                })
+            })
+        }
         return features;
     }
 

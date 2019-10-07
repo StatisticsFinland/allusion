@@ -436,12 +436,18 @@ class Map extends Component {
 
   addRegMuns = (regMuns) => {
     let ret = false;
-    if (regMuns) {
+    if (regMuns.length) {
       ret = true;
       const layer = this.getLayerByName('Municipalities');
       let source = layer.getSource();
       source.clear();
       source.addFeatures(regMuns);
+
+
+      const munsByRegion = _.groupBy(regMuns, mun => mun.get('secondCode'));
+      Object.keys(munsByRegion).sort((a, b) => parseInt(a) - parseInt(b)).forEach(regCode => {
+        this.saveCustomArea(munsByRegion[regCode][0].get('second'), munsByRegion[regCode].map(mun => mun.get('firstCode')));
+      });
     }
     return ret;
   };
@@ -537,9 +543,8 @@ class Map extends Component {
     }
   };
 
-  saveCustomArea = name => {
+  saveCustomArea = (name, selection = [...this.state.selection]) => {
     const savedCustomAreas = this.state.savedCustomAreas;
-    const selection = [...this.state.selection];
     let areaToSave = {
       id: uuid(),
       "order": savedCustomAreas.length + 1,

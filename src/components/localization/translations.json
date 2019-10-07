@@ -107,6 +107,10 @@
         "saveCustomAreaModification": [
             "Save",
             "Tallenna"
+        ],
+      "showAllCustomAreas": [
+        "Select all",
+        "Valitse kaikki"
         ]
     },
     "button": {
