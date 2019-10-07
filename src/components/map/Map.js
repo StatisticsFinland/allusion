@@ -20,7 +20,7 @@ import calculateBreaks from './functions/calculateBreaks';
 import createStyle from './functions/createStyle';
 import MapPopover from './info/MapPopover';
 import InfoDrawer from './info/InfoDrawer';
-import select from './info/select';
+import {munBorderSelect, select} from './info/select';
 import dragBox from './info/dragBox';
 import SearchDialog from './search/SearchDialog';
 import LayerDrawer from './LayerDrawer';
@@ -68,7 +68,7 @@ class Map extends Component {
     variable: '',
     selectedLayer: null,
     relativeToArea: false,
-    municipalityBordersVisible: false
+    municipalityBordersVisible: FinMun.getVisible()
   };
 
   view = new View({
@@ -81,7 +81,7 @@ class Map extends Component {
 
   /* Initiate map */
   map = new OLMap({
-    layers: [...BasemapSel, ...LayerSel, FinMun],
+    layers: [...BasemapSel, FinMun, ...LayerSel],
     view: this.view,
     controls: [],
     interactions: interactions
@@ -127,6 +127,7 @@ class Map extends Component {
     this.props.onRef(this);
     this.map.setTarget(this.mapDiv);
     this.map.addInteraction(select);
+    this.map.addInteraction(munBorderSelect);
     this.map.addInteraction(dragBox);
 
     /* Set initial basemap and layer stuff */
@@ -136,7 +137,9 @@ class Map extends Component {
 
     /* Map click events */
     this.map.on('singleclick', event => {
-      if (!select.getActive() || select.getFeatures().getArray().length === 0) {
+      if ((!select.getActive() && !munBorderSelect.getActive()) ||
+          (select.getFeatures().getArray().length === 0 && munBorderSelect.getFeatures().getArray().length === 0)
+      ) {
         selectionCoordinates = event.coordinate;
         this.getFeaturesByCoordinates(event, selectionCoordinates);
         this.pop();
@@ -153,6 +156,29 @@ class Map extends Component {
       getFeatureInfo(event, this.map, selectedFeatures).then(featureInfo => {
         this.pop(event, parseFeatureInfo(featureInfo, '', blackList.map));
       })
+    });
+
+    /* Map selection interaction with municipality borders*/
+    munBorderSelect.on('select', event => {
+      function selectDeselectMuni(code, selection) {
+        !_.includes(selection, code) ? this.drawerRef.catRef.addToSelection([code])
+            : this.drawerRef.catRef.removeFromSelection([code]);
+        event.target.getFeatures().clear();
+      }
+
+      if (event.target.getFeatures().getArray().length) {
+        let code = event.target.getFeatures().getArray()[0].get("firstCode");
+        if (code) {
+          selectDeselectMuni.call(this, code, this.state.selection);
+        } else {
+          let codes = this.map.getFeaturesAtPixel(this.map.getPixelFromCoordinate(event.mapBrowserEvent.coordinate), {
+            layerFilter: queriedLayer => queriedLayer.getProperties().name === 'Municipalities'
+          }).map(feature => feature.get("firstCode"));
+          if (codes && codes.length) {
+            selectDeselectMuni.call(this, codes[0], this.state.selection);
+          }
+        }
+      }
     });
 
     dragBox.on('boxend', event => {
@@ -180,7 +206,6 @@ class Map extends Component {
       source.forEachFeatureIntersectingExtent(extent, feature => {
         //feature.setStyle(createSelectionStyle(this.props.selectedLayer.style))
         selectedFeatures.push(feature);
-        console.log("Selected");
         console.log(feature);
       });
       //  selectedFeatures.forEach(feature => feature.setStyle(createStyle(this.state.selectedLayer.style, null, true)))
@@ -234,7 +259,7 @@ class Map extends Component {
   };
 
   updateStatsFromApp = (pop) => {
-    const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'SparQL');
+    const layer = this.getLayerByName('SparQL');
     const features = layer.getSource().getFeatures();
     getFeatureInfo(null, this.map).then(featureInfo => {
       if (selectedFeatures) {
@@ -307,7 +332,6 @@ class Map extends Component {
     this.props.toggleSearch();
   };
 
-
   setVariable = variable => {
     this.setState({variable: this.state.relativeToArea ? `${variable}_km2` : variable}, () => {
     });
@@ -327,7 +351,6 @@ class Map extends Component {
   };
 
   prepareStyle = (layer, features, property) => {
-
     let selectedLayer = makeCopy(this.state.selectedLayer);
     let uniqueValues = [...new Set(features.map(feat => !isNaN(feat.get(property)) ? parseFloat(feat.get(property)) : feat.get(property)))];
     let values = numericSort(uniqueValues);
@@ -376,13 +399,17 @@ class Map extends Component {
 
   };
 
+  getLayerByName = name => {
+    return this.map.getLayers().getArray().find(layer => layer.getProperties().name === name);
+  };
+
   changeMuns = selection => {
     this.setState({selection}, () => {
       this.props.handleSelectingMunips(selection);
     });
 
     if (selection.length === 0) {
-      const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'SparQL');
+      const layer = this.getLayerByName('SparQL');
       let source = layer.getSource();
       source.clear();
       selectedFeatures = null;
@@ -402,7 +429,7 @@ class Map extends Component {
   };
 
   switchLabels = () => {
-    const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'SparQL');
+    const layer = this.getLayerByName('SparQL');
     const features = layer.getSource().getFeatures();
     this.state.selectedLayer && this.prepareStyle(layer, features, this.state.variable);
   };
@@ -411,7 +438,7 @@ class Map extends Component {
     let ret = false;
     if (regMuns) {
       ret = true;
-      const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'Municipalities');
+      const layer = this.getLayerByName('Municipalities');
       let source = layer.getSource();
       source.clear();
       source.addFeatures(regMuns);
@@ -420,7 +447,7 @@ class Map extends Component {
   };
 
   toggleMunicipalityVisibility = () => {
-    const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'Municipalities');
+    const layer = this.getLayerByName('Municipalities');
     const municipalityBordersVisible = !layer.getVisible();
     layer.setVisible(municipalityBordersVisible);
     this.setState({municipalityBordersVisible});
@@ -430,7 +457,7 @@ class Map extends Component {
   addFeaturesToMap = (response) => {
     const statisticalVariable = this.state.variable;
     const features = response.features;
-    const layer = this.state.map.getLayers().getArray().find(layer => layer.getProperties().name === 'SparQL');
+    const layer = this.getLayerByName('SparQL');
     let source = layer.getSource();
     source.clear();
 
@@ -548,7 +575,7 @@ class Map extends Component {
         relativeToArea: !this.state.relativeToArea,
         variable: this.state.variable.includes('_km2') ? this.state.variable.split('_km2')[0] : `${this.state.variable}_km2`
       }, () => {
-        const layer = this.map.getLayers().getArray().find(layer => layer.getProperties().name === 'SparQL');
+        const layer = this.getLayerByName('SparQL');
         const features = layer.getSource().getFeatures();
         this.prepareStyle(layer, features, this.state.variable);
       });
@@ -615,11 +642,12 @@ class Map extends Component {
           }
           {this.addRegMuns(this.props.munRegFeatures) &&
           <LayerDrawer
+              onRef={ref => (this.drawerRef = ref)}
               addLayerToDB={this.addLayerToDB}
               editLayerInDB={this.editLayerInDB}
               deleteLayerFromDB={this.deleteLayerFromDB}
               layerDrawerVisibility={this.props.layerDrawerVisibility}
-              map={this.state.map}
+              map={this.map}
               basemap={this.state.basemap}
               changeBasemap={this.changeBasemap}
               basemapOpacity={this.state.basemapOpacity}

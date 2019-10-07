@@ -4,11 +4,10 @@ import Stroke from 'ol/style/Stroke';
 import Circle from 'ol/style/Circle';
 import Text from 'ol/style/Text';
 import Point from 'ol/geom/Point.js';
-import { getWidth, getCenter } from 'ol/extent.js';
+import {getCenter, getWidth} from 'ol/extent.js';
 
 /* Callback function for generating style for an OpenLayers feature */
 const createStyle = (style, time = null, selection = false, relativeToArea = null, labels = null) => (feature, resolution) => {
-
     /* Get colors for different data styling methods */
     let fill, stroke, newStyle, featureStyle;
     let markerStyle = null;

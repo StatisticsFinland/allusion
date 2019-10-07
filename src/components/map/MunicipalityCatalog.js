@@ -102,7 +102,7 @@ class MunicipalityCatalog extends Component {
         this.setState({munids}, () => this.props.changeMuns(munids));
     };
 
-    deactivateSelection = muns => {
+    removeFromSelection = muns => {
         let munids = _.difference(this.state.munids, muns);
         this.activateSelection(munids);
         this.setState({munids}, () => this.props.changeMuns(munids));

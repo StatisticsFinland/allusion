@@ -3,7 +3,9 @@ import rasterInfo from './rasterInfo';
 
 const getFeatureInfo = (event, map, features = null, coordinates = null) => {
 
-    let layers = map.getLayers().getArray().filter(layer => layer.getVisible() && layer.getProperties().type !== 'base' && layer.getProperties().type !== 'filter');
+    let layers = map.getLayers().getArray().filter(layer => layer.getVisible() &&
+        layer.getProperties().kind !== 'auxiliary' &&
+        layer.getProperties().type !== 'base' && layer.getProperties().type !== 'filter');
     let format = 'application/json';
     let resolution = map.getView().getResolution();
     let promises = [];

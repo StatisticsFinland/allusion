@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React, {Component} from 'react';
+import {withStyles} from '@material-ui/core/styles';
 import Popover from '@material-ui/core/Popover'
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import { isNumeric, formatNum, blackList } from './../../../globals';
-import { LanguageContext } from './../../../App';
+import {formatNum, isNumeric} from './../../../globals';
+import {LanguageContext} from './../../../App';
 
 const styles = theme => ({
     popover: {
@@ -26,7 +26,7 @@ class MapPopover extends Component {
         let content = [];
         const { classes } = this.props;
 
-        featureInfo && featureInfo.map((feature, index) => {
+        featureInfo && featureInfo.filter(feature => feature.LAYERTITLE !== "Municipalities").map((feature, index) => {
             content.push(
                 <div key={`MapPopover_${index}`}>
                     {index !== featureInfo.length - 1 && index !== 0 && !layers.includes(feature.LAYERTITLE) && <Divider></Divider>}

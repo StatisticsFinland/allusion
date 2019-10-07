@@ -57,6 +57,10 @@ class LayerDrawer extends Component {
     scaleSelection: '4500000'
   };
 
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+
   /* Request new layer to be added to DB (send to Map) */
   addLayerToDB = (newLayer) => {
     this.props.addLayerToDB(newLayer);
@@ -95,7 +99,7 @@ class LayerDrawer extends Component {
       this.catRef.addToSelection(selection);
       this.props.toggleCustomAreaActivation(area, true);
     } else {
-      this.catRef.deactivateSelection(selection);
+      this.catRef.removeFromSelection(selection);
       this.props.toggleCustomAreaActivation(area, false);
     }
   };

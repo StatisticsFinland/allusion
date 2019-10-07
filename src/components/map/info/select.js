@@ -1,5 +1,5 @@
 import Select from 'ol/interaction/Select';
-import { click } from 'ol/events/condition.js'; 
+import {altKeyOnly, click} from 'ol/events/condition.js';
 
 /*, pointerMove, altKeyOnly*/
 /* reference to currently selected interaction */
@@ -8,8 +8,21 @@ import { click } from 'ol/events/condition.js';
 let select = new Select({
     condition: click,
     filter: (feature, layer) => {
-        return layer.type === 'VECTOR' || layer.get('type' === 'VECTOR_LAYER')
+      return layer && layer.get('kind') === 'main' && (layer.type === 'VECTOR'
+          || layer.get('type' === 'VECTOR_LAYER'))
     }
+});
+
+
+// select interaction working on "ALT + click" only for auxiliary layers
+let munBorderSelect = new Select({
+  condition: (event) => {
+    return click(event) && altKeyOnly(event)
+  },
+  filter: (feature, layer) => {
+    return layer && layer.get('kind') === 'auxiliary' && (layer.type === 'VECTOR'
+        || layer.get('type' === 'VECTOR_LAYER'))
+  }
 });
 
 // select interaction working on "pointermove"
@@ -42,4 +55,4 @@ let changeInteraction = (select, value, map) => {
     }
 };
 */
-export default select;
+export {select, munBorderSelect};
