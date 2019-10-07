@@ -11,7 +11,7 @@ import {blackList, fieldAliases, isEmpty, makeCopy, srs} from '../../globals';
 import {EPSG3067} from './projection/projections';
 import Basemaps from './basemaps/Basemaps';
 import Layers from './layers/Layers';
-import FinMun from './layers/FinMun';
+import {FinMun, invisibleStyle, visibleStyle} from './layers/FinMun';
 import ZoomIn from './zoom/ZoomIn';
 import ZoomOut from './zoom/ZoomOut';
 import getFeatureInfo from './info/getFeatureInfo';
@@ -68,7 +68,7 @@ class Map extends Component {
     variable: '',
     selectedLayer: null,
     relativeToArea: false,
-    municipalityBordersVisible: FinMun.getVisible()
+    municipalityBordersVisible: FinMun.get('linesVisibleInitially')
   };
 
   view = new View({
@@ -448,8 +448,12 @@ class Map extends Component {
 
   toggleMunicipalityVisibility = () => {
     const layer = this.getLayerByName('Municipalities');
-    const municipalityBordersVisible = !layer.getVisible();
-    layer.setVisible(municipalityBordersVisible);
+    const municipalityBordersVisible = !this.state.municipalityBordersVisible;
+    if (municipalityBordersVisible) {
+      layer.setStyle(visibleStyle);
+    } else {
+      layer.setStyle(invisibleStyle);
+    }
     this.setState({municipalityBordersVisible});
   };
 

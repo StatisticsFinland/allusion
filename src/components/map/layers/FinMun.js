@@ -4,23 +4,37 @@ import Style from 'ol/style/Style';
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 
+const visibleStyle = new Style({
+  stroke: new Stroke({
+    color: 'rgb(0,0,0)',
+    width: 0.3
+  }),
+  fill: new Fill(
+      {
+        color: 'rgba(17,244,0,0.001)',
+      })
+});
+
+const invisibleStyle = new Style({
+  stroke: new Stroke({
+    color: 'rgba(0,0,0,0)',
+    width: 0.3
+  }),
+  fill: new Fill(
+      {
+        color: 'rgba(17,244,0,0.0)',
+      })
+});
+
+
 const FinMun = new VectorLayer({
   name: 'Municipalities',
   title: 'Finnish Municipalities',
   visible: true,
   kind: 'auxiliary',
-  style: new Style({
-    stroke: new Stroke({
-      color: 'black',
-      width: 0.3
-    }),
-    fill: new Fill(
-        {
-          color: 'rgba(17,244,0,0.001)',
-        })
-  }),
-
+  linesVisibleInitially: false,
+  style: invisibleStyle,
   source: new VectorSource({})
 });
 
-export default FinMun;
+export {FinMun, visibleStyle, invisibleStyle};
