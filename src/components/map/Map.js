@@ -487,11 +487,10 @@ class Map extends Component {
       let featuresBelongingToCustomAreas = _.uniq(_.flatten(
           savedCustomAreas
               .filter(area => area.activated && !area.beingModified)
-              .map(area => area.selection)
-              .map(selection => {
+              .map(area => {
                 // TODO: Modify if wanted to have municipality in multiple areas
-                let customAreaFeatures = features.filter(feature => _.includes(selection, feature.get('municipalityCode')));
-                let customAreaFeature = calculateUnionAggregate(customAreaFeatures, statisticalVariable);
+                let customAreaFeatures = features.filter(feature => _.includes(area.selection, feature.get('municipalityCode')));
+                let customAreaFeature = calculateUnionAggregate(customAreaFeatures, statisticalVariable, area.name);
                 if (customAreaFeature) {
                   source.addFeature(customAreaFeature);
                 }
@@ -550,7 +549,6 @@ class Map extends Component {
     const savedCustomAreas = [...this.state.savedCustomAreas];
     let areaToSave = {
       id: uuid(),
-      "order": savedCustomAreas.length + 1,
       name,
       selection,
       beingModified: false,
@@ -573,7 +571,7 @@ class Map extends Component {
     })).filter(area => !savedCustomAreas.some(area2 => area2.name === area.name));
 
     this.setState({savedCustomAreas: [...savedCustomAreas, ...newAreas]});
-  }
+  };
 
   modifyCustomArea = area => {
     let id = area.id;

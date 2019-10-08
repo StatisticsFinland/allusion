@@ -146,7 +146,7 @@ class SavedAreaCatalog extends Component {
               </ListItem>
             </div>
             }
-            {savedCustomAreas.sort((a, b) => a.order - b.order).map(area => {
+            {savedCustomAreas.sort((a, b) => a.name.localeCompare(b.name)).map(area => {
               return <div key={`div_${area.id}`} style={{display: 'flex'}}>
                 <Checkbox key={`checkbox_${area.id}`}
                           color='primary'

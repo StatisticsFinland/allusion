@@ -5,7 +5,7 @@ import {EPSG3067} from "../projection/projections";
 import * as _ from 'lodash';
 
 /* Function to calculate aggregated  of the features */
-const calculateAggregatedProperties = (features, statisticalField) => {
+const calculateAggregatedProperties = (features, statisticalField, areaName) => {
   let statField = statisticalField.replace("_km2", "");
 
   let allProperties = _.reduce(_.map(features, f => f.getProperties()), (result, value) => {
@@ -30,7 +30,7 @@ const calculateAggregatedProperties = (features, statisticalField) => {
       }
     }
     return res;
-  }, {});
+  }, {'customAreaName': areaName});
 
   if (properties[statField] && properties['landArea']) {
     properties[statField + "_km2"] = properties[statField] / properties['landArea'];
@@ -46,7 +46,7 @@ const calculateAggregatedProperties = (features, statisticalField) => {
 
 
 /* Function to calculate union of the features */
-const calculateUnionAggregate = (features, statisticalField) => {
+const calculateUnionAggregate = (features, statisticalField, areaName) => {
   let format = new GeoJSON();
   if (features.length < 2) {
     return features[0];
@@ -62,7 +62,7 @@ const calculateUnionAggregate = (features, statisticalField) => {
   }
 
   let unionFeature = format.readFeature(unionFeatureTurf);
-  unionFeature.setProperties(calculateAggregatedProperties(features, statisticalField));
+  unionFeature.setProperties(calculateAggregatedProperties(features, statisticalField, areaName));
   unionFeature.getGeometry().transform('EPSG:4326', EPSG3067.getCode());
 
   return unionFeature;
