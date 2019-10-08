@@ -162,8 +162,8 @@ class Map extends Component {
     /* Map selection interaction with municipality borders*/
     munBorderSelect.on('select', event => {
       function selectDeselectMuni(code, selection) {
-        !_.includes(selection, code) ? this.drawerRef.catRef.addToSelection([code])
-            : this.drawerRef.catRef.removeFromSelection([code]);
+        !_.includes(selection, code) ? this.drawerRef.catRef.addRemoveFromSelection([code])
+            : this.drawerRef.catRef.addRemoveFromSelection([], [code]);
         event.target.getFeatures().clear();
       }
 
@@ -611,21 +611,19 @@ class Map extends Component {
     let savedCustomAreas = [...this.state.savedCustomAreas];
     area.activated = state;
     let otherAreas = savedCustomAreas.filter(area => area.id !== id);
+    let munisToDeselect = [];
     if (state) {
       // Deactivate the custom areas with same municipalities
-      let munisToDeselect = [];
       otherAreas.forEach(area2 => {
         if (area2.activated && _.intersection(area.selection, area2.selection).length) {
           area2.activated = false;
           munisToDeselect = _.union(munisToDeselect, _.difference(area2.selection, area.selection));
         }
       });
-      if (munisToDeselect.length) {
-        this.drawerRef.catRef.removeFromSelection(munisToDeselect);
-      }
     }
 
     this.setState({savedCustomAreas: [...otherAreas, area]});
+    return munisToDeselect;
   };
 
   addCustomAreasFromQuery = qs => {

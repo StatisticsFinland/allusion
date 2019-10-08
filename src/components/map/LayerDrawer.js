@@ -99,22 +99,25 @@ class LayerDrawer extends Component {
   toggleCustomAreaSelection = area => {
     let selection = [...area.selection];
     if (!area.activated) {
-      this.catRef.addToSelection(selection);
-      this.props.toggleCustomAreaActivation(area, true);
+      let munisToDeselect = this.props.toggleCustomAreaActivation(area, true);
+      this.catRef.addRemoveFromSelection(selection, munisToDeselect);
     } else {
-      this.catRef.removeFromSelection(selection);
       this.props.toggleCustomAreaActivation(area, false);
+      this.catRef.addRemoveFromSelection([], selection);
     }
   };
 
   toggleAllCustomAreas = (selectionState) => {
+    //TODO: Fix this
     let selection = [...this.props.savedCustomAreas.flatMap(area => area.selection)];
+    let munisToDeselect = this.props.savedCustomAreas
+        .flatMap(area => this.props.toggleCustomAreaActivation(area, selectionState));
     if (selectionState) {
-      this.catRef.addToSelection(selection);
+      this.catRef.addRemoveFromSelection(selection, munisToDeselect);
     } else {
-      this.catRef.removeFromSelection(selection);
+      this.catRef.addRemoveFromSelection([], selection);
     }
-    this.props.savedCustomAreas.forEach(area => this.props.toggleCustomAreaActivation(area, selectionState));
+
   };
 
   /* Handle user's own selection radio button changes */

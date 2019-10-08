@@ -64,9 +64,9 @@ class MunicipalityCatalog extends Component {
         nuts: false
     };
 
-    componentDidMount() {
-        this.props.onRef(this);
-    }
+  componentDidMount() {
+    this.props.onRef(this);
+  }
 
     emptySelections = () => {
         this.setState({
@@ -77,36 +77,30 @@ class MunicipalityCatalog extends Component {
         this.props.emptyMap();
     }
 
-    handleClickSubMenu = group => this.state.subOpen === group ? this.setState({ subOpen: 0 }) : this.setState({ subOpen: group });
-    handleClickTopMenu = group => this.state.topOpen === group ? this.setState({ topOpen: 0 }) : this.setState({ topOpen: group });
-    hitTheNUTS = () => {
-        this.setState({ nuts: !this.state.nuts })
-    }
-    activateSelection = munids => {
-        const features = this.props.features;
-        let munFeatures = features.filter(feature => munids.includes(feature.firstCode));
-        let activeRegions = [...new Set(munFeatures.map(feat => feat.secondCode))];
-        let regids = [];
-        activeRegions.forEach(region => {
-            let regMuns = features.filter(feature => feature.secondCode === region);
-            if (regMuns.every(mun => munids.includes(mun.firstCode))) {
-                regids.push(region)
-            }
-        })
-        this.setState({ munids, regids, activeRegions });
-    }
+  handleClickSubMenu = group => this.state.subOpen === group ? this.setState({subOpen: 0}) : this.setState({subOpen: group});
+  handleClickTopMenu = group => this.state.topOpen === group ? this.setState({topOpen: 0}) : this.setState({topOpen: group});
+  hitTheNUTS = () => {
+    this.setState({nuts: !this.state.nuts})
+  };
+  activateSelection = munids => {
+    const features = this.props.features;
+    let munFeatures = features.filter(feature => munids.includes(feature.firstCode));
+    let activeRegions = [...new Set(munFeatures.map(feat => feat.secondCode))];
+    let regids = [];
+    activeRegions.forEach(region => {
+      let regMuns = features.filter(feature => feature.secondCode === region);
+      if (regMuns.every(mun => munids.includes(mun.firstCode))) {
+        regids.push(region)
+      }
+    });
+    this.setState({munids, regids, activeRegions});
+  };
 
-    addToSelection = muns => {
-        let munids = _.union(this.state.munids, muns);
-        this.activateSelection(munids);
-        this.setState({munids}, () => this.props.changeMuns(munids));
-    };
-
-    removeFromSelection = muns => {
-        let munids = _.difference(this.state.munids, muns);
-        this.activateSelection(munids);
-        this.setState({munids}, () => this.props.changeMuns(munids));
-    }
+  addRemoveFromSelection = (munsToAdd, munsToRemove = []) => {
+    let munids = _.difference(_.union(this.state.munids, munsToAdd), munsToRemove);
+    this.activateSelection(munids);
+    this.setState({munids}, () => this.props.changeMuns(munids));
+  };
 
     addRemoveMunid = (features, munid) => {
         let munids = this.state.munids;
@@ -149,26 +143,26 @@ class MunicipalityCatalog extends Component {
         this.setState({ regids, munids }, () => this.props.changeMuns(munids))
     }
 
-    createMenu = (features, txt) => {
+  createMenu = (features, txt) => {
 
-        const { classes } = this.props;
+    const {classes} = this.props;
 
-        let grandParents = [];
-        let grandGroups = [...new Set(features.map(feature => feature.third))].sort();
+    let grandParents = [];
+    let grandGroups = [...new Set(features.map(feature => feature.third))].sort();
 
-        grandGroups.forEach((grandGroup, grandIndex) => {
+    grandGroups.forEach((grandGroup, grandIndex) => {
 
-            let parents = [];
-            let groups = [...new Set(features.filter(feature => feature.third === grandGroup).map(feature => feature.second))].sort();
-            let grandGroupNUTS = features.find(feature => feature.third === grandGroup).thirdNUTS;
+      let parents = [];
+      let groups = [...new Set(features.filter(feature => feature.third === grandGroup).map(feature => feature.second))].sort();
+      let grandGroupNUTS = features.find(feature => feature.third === grandGroup).thirdNUTS;
 
-            groups.forEach((group, parentIndex) => {
+      groups.forEach((group, parentIndex) => {
 
                 let groupItems = features.filter(feature => feature.second === group);
                 let groupNUTS = groupItems[0].secondNUTS;
                 groupItems.sort((a, b) => a.first < b.first ? -1 : 1)
 
-                let children = [];
+        let children = [];
 
                 groupItems.forEach((item, index) => {
                     children.push(
@@ -219,30 +213,32 @@ class MunicipalityCatalog extends Component {
                 )
             })
 
-            grandParents.push(
-                <div key={grandGroup}>
-                    {grandIndex === 0 && <Typography variant='body2' style={{ color: '#666', fontSize: 12 }}>{txt.igalod.grand}</Typography>}
-                    <div style={{ display: 'flex' }}>
-                        <ListItem
-                            classes={{ root: classes.grandParent }}
-                            button
-                            disableGutters={true}
-                            aria-haspopup="true"
-                            dense
-                            aria-controls="indicatorSelector"
-                            aria-label={'group'}
-                            onClick={() => this.handleClickTopMenu(grandGroup)}>
-                            <ListItemText primary={this.state.nuts ? `${grandGroup} (${grandGroupNUTS})` : grandGroup}
-                            />
-                            {this.state.topOpen === grandGroup ? <ExpandLess className={classes.subItem} /> : <ExpandMore className={classes.subItem} />}
-                        </ListItem>
-                    </div>
-                    <Collapse in={this.state.topOpen === grandGroup} timeout="auto" unmountOnExit>
-                        <List component="div">{parents}
-                        </List>
-                    </Collapse>
-                </div>
-            )
+      grandParents.push(
+          <div key={grandGroup}>
+            {grandIndex === 0 &&
+            <Typography variant='body2' style={{color: '#666', fontSize: 12}}>{txt.igalod.grand}</Typography>}
+            <div style={{display: 'flex'}}>
+              <ListItem
+                  classes={{root: classes.grandParent}}
+                  button
+                  disableGutters={true}
+                  aria-haspopup="true"
+                  dense
+                  aria-controls="indicatorSelector"
+                  aria-label={'group'}
+                  onClick={() => this.handleClickTopMenu(grandGroup)}>
+                <ListItemText primary={this.state.nuts ? `${grandGroup} (${grandGroupNUTS})` : grandGroup}
+                />
+                {this.state.topOpen === grandGroup ? <ExpandLess className={classes.subItem}/> :
+                    <ExpandMore className={classes.subItem}/>}
+              </ListItem>
+            </div>
+            <Collapse in={this.state.topOpen === grandGroup} timeout="auto" unmountOnExit>
+              <List component="div">{parents}
+              </List>
+            </Collapse>
+          </div>
+      )
 
         })
 
@@ -267,12 +263,12 @@ class MunicipalityCatalog extends Component {
             </div>);
     }
 
-    render() {
+  render() {
 
-        return (
-            this.createMenu(this.props.features, this.props.txt)
-        );
-    }
+    return (
+        this.createMenu(this.props.features, this.props.txt)
+    );
+  }
 }
 
 export default withStyles(styles)(MunicipalityCatalog);
