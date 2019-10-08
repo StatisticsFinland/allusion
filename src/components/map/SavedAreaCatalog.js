@@ -3,10 +3,14 @@ import {withStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Chip from "@material-ui/core/Chip";
 import Button from '@material-ui/core/Button';
-import {Divider} from "@material-ui/core";
+import Divider from '@material-ui/core/Divider';
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import Share from '@material-ui/icons/Share';
+import Tooltip from "@material-ui/core/Tooltip";
+import queryString from 'query-string';
+
 
 const styles = theme => ({
   inputPadding: {
@@ -35,10 +39,29 @@ const styles = theme => ({
 
 class SavedAreaCatalog extends Component {
 
-
   startModifyingCustomArea = area => {
     this.props.changeCustomAreaModifiedName(area.name);
     this.props.modifyCustomArea(area);
+  };
+
+  saveNewCustomArea = name => {
+    this.props.saveCustomArea(name);
+    this.props.changeCustomAreaName("");
+  };
+
+  shareCustomAreas = () => {
+    let names = [];
+    let selections = [];
+    this.props.savedCustomAreas.forEach(area => {
+      names.push(area.name);
+      selections.push(area.selection);
+    });
+
+    const areas = queryString.stringify({
+      name: names,
+      selection: selections
+    });
+    window.prompt(this.props.txt.shareDialog.copy, `${window.location.href}?${areas}`);
   };
 
   populateListItem = area => {
@@ -94,13 +117,6 @@ class SavedAreaCatalog extends Component {
     }
 
   };
-
-
-  saveNewCustomArea = name => {
-    this.props.saveCustomArea(name);
-    this.props.changeCustomAreaName("");
-  };
-
 
   render() {
 
@@ -170,9 +186,21 @@ class SavedAreaCatalog extends Component {
                 }}
                 classes={{root: classes.text}}>
             </TextField>
+
+
           </div>
-          <Button color='primary'
-                  onClick={() => this.saveNewCustomArea(customAreaName)}>{txt.button.saveNew}</Button>
+          <div key={`div_custom_area_buttons`} style={{display: 'flex'}}>
+            <Button color='primary'
+                    onClick={() => this.saveNewCustomArea(customAreaName)}>{txt.button.saveNew}</Button>
+
+            <Divider orientation="vertical"/>
+            <Tooltip id="infoButtonTooltip" title={txt.shareDialog.tooltip} placement={"bottom-start"}>
+              <Button size='small' onClick={() => this.shareCustomAreas()}>
+                <Share/>
+              </Button>
+            </Tooltip>
+          </div>
+
 
           <Divider/>
           <div style={{display: 'flex', flexDirection: 'column'}}>

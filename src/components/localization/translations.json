@@ -335,6 +335,16 @@
             "Vaihda palvelun kieli. Tällä hetkellä tuettuja vaihtoehtoja ovat suomi ja englanti."
         ]
     },
+    "shareDialog": {
+        "tooltip": [
+            "Share custom areas",
+            "Jaa omat aluevalinnat"
+        ],
+        "copy": [
+            "Copy to clipboard: Ctrl+C, Enter",
+            "Kopioi leikepöydälle: Ctrl+C, Enter"
+        ]
+    },
     "charts": {
         "selectFirst": [
             "Please select a layer from the map catalog first!",

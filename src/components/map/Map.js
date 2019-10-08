@@ -31,6 +31,7 @@ import chroma from 'chroma-js';
 import Legend from './Legend';
 import calculateUnionAggregate from "./functions/calculateUnionAggregate";
 import uuid from "./functions/uuid";
+import queryString from 'query-string';
 
 
 let interactions = defaultInteractions({altShiftDragRotate: false, pinchRotate: false});
@@ -192,6 +193,8 @@ class Map extends Component {
       //   select.getFeatures().forEach(feature => feature.setStyle(createStyle(this.state.selectedLayer.style, null, false)))
       select.getFeatures().clear();
     });
+
+    this.addCustomAreasFromQuery(window.location.search);
 
   }
 
@@ -544,7 +547,7 @@ class Map extends Component {
   };
 
   saveCustomArea = (name, selection = [...this.state.selection]) => {
-    const savedCustomAreas = this.state.savedCustomAreas;
+    const savedCustomAreas = [...this.state.savedCustomAreas];
     let areaToSave = {
       id: uuid(),
       "order": savedCustomAreas.length + 1,
@@ -557,6 +560,20 @@ class Map extends Component {
       this.setState({savedCustomAreas: [...savedCustomAreas, areaToSave]});
     }
   };
+
+  saveMultipleCustomAreas = areas => {
+    const savedCustomAreas = [...this.state.savedCustomAreas];
+    const newAreas = areas.map(area => new Object({
+      id: uuid(),
+      "order": savedCustomAreas.length + 1,
+      name: area.name,
+      selection: area.selection,
+      beingModified: false,
+      activated: false
+    })).filter(area => !savedCustomAreas.some(area2 => area2.name === area.name));
+
+    this.setState({savedCustomAreas: [...savedCustomAreas, ...newAreas]});
+  }
 
   modifyCustomArea = area => {
     let id = area.id;
@@ -611,6 +628,23 @@ class Map extends Component {
     }
 
     this.setState({savedCustomAreas: [...otherAreas, area]});
+  };
+
+  addCustomAreasFromQuery = qs => {
+    if (qs) {
+      try {
+        const parsedAreas = queryString.parse(qs);
+        let i = 0;
+        let areas = [];
+        for (i = 0; i < parsedAreas.name.length; i++) {
+          let sel = parsedAreas.selection[i].split(",");
+          areas.push({name: parsedAreas.name[i], selection: sel[0] !== "" ? sel : []});
+        }
+        areas.length && this.saveMultipleCustomAreas(areas);
+      } catch (e) {
+        console.error("Could not parse area param", e);
+      }
+    }
   };
 
   deleteArea = id => {

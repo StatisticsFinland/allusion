@@ -251,24 +251,28 @@ class App extends Component {
   };
 
   handleGetAreas = async (language) => {
-    /* Fetch regions and municipalities from MML endpoint for LayerDrawer */
-    let promises = [
-      RegionController.getRegionsAndMunicipalities(QueryGenerator.regionMunQuery(language, '2019')),
-      RegionController.getGeometriesForMunicipalities(QueryGenerator.regionMunGeomQuery('2019'))
-    ];
 
-    const jsons = await Promise.all(
-        promises.map(promise => promise.then(res => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            console.log('Error while fetching geometries for municipalities from MML');
-            return Promise.reject();
-          }
-        }))
-    );
-    const munRegFeatures = RegionController.parseRegionsAndMunicipalities(jsons);
-    this.setState({munRegFeatures});
+    try { /* Fetch regions and municipalities from MML endpoint for LayerDrawer */
+      let promises = [
+        RegionController.getRegionsAndMunicipalities(QueryGenerator.regionMunQuery(language, '2019')),
+        RegionController.getGeometriesForMunicipalities(QueryGenerator.regionMunGeomQuery('2019'))
+      ];
+
+      const jsons = await Promise.all(
+          promises.map(promise => promise.then(res => {
+            if (res.ok) {
+              return res.json();
+            } else {
+              console.log('Error while fetching geometries for municipalities from MML');
+              return Promise.reject();
+            }
+          }))
+      );
+      const munRegFeatures = RegionController.parseRegionsAndMunicipalities(jsons);
+      this.setState({munRegFeatures});
+    } catch (e) {
+      console.error("Failed to fetch", e);
+    }
   };
 
   render() {
