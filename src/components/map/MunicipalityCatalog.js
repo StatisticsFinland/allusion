@@ -82,8 +82,7 @@ class MunicipalityCatalog extends Component {
       majorRegids: [],
       customMunids: [],
       activeRegions: []
-    });
-    this.props.emptyMap();
+    }, () => this.props.emptyMap());
   };
 
   handleClickSubMenu = group => this.state.subOpen === group ? this.setState({subOpen: 0}) : this.setState({subOpen: group});
