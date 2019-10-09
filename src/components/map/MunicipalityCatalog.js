@@ -67,6 +67,7 @@ class MunicipalityCatalog extends Component {
     munids: [],
     regids: [],
     majorRegids: [],
+    customMunids: [],
     nuts: false
   };
 
@@ -79,6 +80,7 @@ class MunicipalityCatalog extends Component {
       munids: [],
       regids: [],
       majorRegids: [],
+      customMunids: [],
       activeRegions: []
     });
     this.props.emptyMap();
@@ -102,6 +104,11 @@ class MunicipalityCatalog extends Component {
     this.activateSelection(munids);
     this.setState({munids},
         () => this.props.changeMuns(munids, this.state.regids, this.state.majorRegids));
+  };
+
+  addRemoveCustomMunids = (munsToAdd, munsToRemove = []) => {
+    let customMunids = _.difference(_.union(this.state.customMunids, munsToAdd), munsToRemove);
+    this.setState({customMunids});
   };
 
   addRemoveMunid = (features, munid) => {
@@ -181,6 +188,20 @@ class MunicipalityCatalog extends Component {
         () => this.props.changeMuns(munids, regids, this.state.majorRegids));
   };
 
+  isChildDisabled = (munid, regid, majorRegid) =>
+      this.state.regids.includes(regid) || this.state.majorRegids.includes(majorRegid)
+      || this.state.customMunids.includes(munid);
+
+  isAllChildrenDisabled = (munids, regid, majorRegid) =>
+      this.state.regids.includes(regid) || this.state.majorRegids.includes(majorRegid)
+      || munids.every(id => this.state.customMunids.includes(id));
+
+  isParentDisabled = (munids, majorRegid) =>
+      this.state.majorRegids.includes(majorRegid) || munids.some(id => this.state.customMunids.includes(id));
+
+  isGrandParentDisabled = (munids) =>
+      munids.some(id => this.state.customMunids.includes(id));
+
   createMenu = (features, txt) => {
 
     const {classes} = this.props;
@@ -190,14 +211,17 @@ class MunicipalityCatalog extends Component {
 
     grandGroups.forEach((grandGroup, grandIndex) => {
 
+
       let parents = [];
-      let groups = [...new Set(features.filter(feature => feature.third === grandGroup).map(feature => feature.second))].sort();
+      let featuresInGrandGroup = features.filter(feature => feature.third === grandGroup);
+      let groups = [...new Set(featuresInGrandGroup.map(feature => feature.second))].sort();
       let grandGroupNUTS = features.find(feature => feature.third === grandGroup).thirdNUTS;
       let grandGroupId = features.find(feature => feature.third === grandGroup).thirdCode;
 
       groups.forEach((group, parentIndex) => {
 
         let groupFeatures = features.filter(feature => feature.second === group);
+        let childIds = groupFeatures.map(f => f.firstCode);
         let groupId = groupFeatures[0].secondCode;
         let groupNUTS = groupFeatures[0].secondNUTS;
         groupFeatures.sort((a, b) => a.first < b.first ? -1 : 1);
@@ -205,12 +229,13 @@ class MunicipalityCatalog extends Component {
         let children = [];
 
         // Select all children
+
         children.push(
             <div key={`div_all`} style={{display: 'flex'}}>
               <Checkbox key={`checkbox_all`}
                         color='primary'
                         style={{paddingLeft: 3, paddingTop: 4, paddingBottom: 4}}
-                        disabled={this.state.majorRegids.includes(grandGroupId)}
+                        disabled={this.isAllChildrenDisabled(childIds, groupId, grandGroupId)}
                         checked={
                           !this.state.regids.includes(groupId) &&
                           groupFeatures.every(f => this.state.munids.includes(f.firstCode))
@@ -222,7 +247,7 @@ class MunicipalityCatalog extends Component {
                   dense
                   button
                   disableGutters={true}
-                  onClick={() => !this.state.majorRegids.includes(grandGroupId) && this.addRemoveAllFromRegion(groupFeatures)}>
+                  onClick={() => !this.isAllChildrenDisabled(groupFeatures.map(f => f.firstCode), groupId, grandGroupId) && this.addRemoveAllFromRegion(groupFeatures)}>
                 <ListItemText key={`listitemtext_all`} primary={txt.igalod.selectAllMunis}/>
               </ListItem>
             </div>
@@ -233,6 +258,7 @@ class MunicipalityCatalog extends Component {
               <div key={`div_${index}`} style={{display: 'flex'}}>
                 <Checkbox key={`checkbox_${index}`} color='primary' style={{paddingTop: 4, paddingBottom: 4}}
                           checked={this.state.munids.includes(item.firstCode)}
+                          disabled={this.isChildDisabled(item.firstCode, groupId, grandGroupId)}
                           onChange={() => this.addRemoveMunid(features, item.firstCode)}/>
                 <ListItem
                     className={classes.first}
@@ -243,7 +269,7 @@ class MunicipalityCatalog extends Component {
                     aria-haspopup="true"
                     aria-controls="placesearch"
                     aria-label="Valitse kunta"
-                    onClick={() => this.addRemoveMunid(features, item.firstCode)}>
+                    onClick={() => !this.isChildDisabled(item.firstCode, groupId, grandGroupId) && this.addRemoveMunid(features, item.firstCode)}>
                   <ListItemText key={`listitemtext_${index}`} primary={item.first}/>
                 </ListItem>
               </div>
@@ -257,6 +283,7 @@ class MunicipalityCatalog extends Component {
               <div style={{display: 'flex'}}>
                 <Checkbox color='primary' style={{paddingLeft: 0, paddingTop: 8, paddingBottom: 8}}
                           checked={this.state.regids.includes(groupId)}
+                          disabled={this.isParentDisabled(childIds, grandGroupId)}
                           onChange={() => this.addRemoveRegid(features, group)}/>
                 <ListItem
                     classes={{root: classes.parent}}
@@ -291,6 +318,7 @@ class MunicipalityCatalog extends Component {
                         color='primary'
                         style={{paddingLeft: 0, marginLeft: -2, paddingTop: 4, paddingBottom: 4}}
                         checked={this.state.majorRegids.includes(grandGroupId)}
+                        disabled={this.isGrandParentDisabled(featuresInGrandGroup.map(f => f.firstCode))}
                         onChange={() => this.addRemoveMajorRegid(features, grandGroupId)}/>
               <ListItem
                   classes={{root: classes.grandParent}}
@@ -320,7 +348,7 @@ class MunicipalityCatalog extends Component {
         <div className={classes.root}>
           <div className={classes.listRoot}>
             <Collapse in={true} timeout="auto" unmountOnExit>
-              {this.state.activeRegions.length !== 0 &&
+              {this.state.customMunids.length === 0 && this.state.activeRegions.length !== 0 &&
               <Chip
                   clickable
                   label={txt.igalod.emptySelections}

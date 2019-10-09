@@ -100,9 +100,11 @@ class LayerDrawer extends Component {
     let selection = [...area.selection];
     if (!area.activated) {
       let munisToDeselect = this.props.toggleCustomAreaActivation(area, true);
+      this.catRef.addRemoveCustomMunids(selection, munisToDeselect);
       this.catRef.addRemoveFromSelection(selection, munisToDeselect);
     } else {
       this.props.toggleCustomAreaActivation(area, false);
+      this.catRef.addRemoveCustomMunids([], selection);
       this.catRef.addRemoveFromSelection([], selection);
     }
   };
@@ -113,9 +115,9 @@ class LayerDrawer extends Component {
     let munisToDeselect = this.props.savedCustomAreas
         .flatMap(area => this.props.toggleCustomAreaActivation(area, selectionState));
     if (selectionState) {
-      this.catRef.addRemoveFromSelection(selection, munisToDeselect);
+      this.catRef.addRemoveCustomMunids(selection, munisToDeselect);
     } else {
-      this.catRef.addRemoveFromSelection([], selection);
+      this.catRef.addRemoveCustomMunids([], selection);
     }
 
   };
@@ -149,7 +151,7 @@ class LayerDrawer extends Component {
                     anchor='left'
                     open={this.props.layerDrawerVisibility}>
                   <Typography style={{padding: 12}} variant='subtitle1'><strong>ALLUsion</strong></Typography>
-                  <ExpansionPanel defaultExpanded expanded={expanded === 'panel1'}
+                  <ExpansionPanel defaultExpanded expanded={expanded === 'panel1' || expanded === 'panel3'}
                                   onChange={this.handleChange('panel1')} classes={{expanded: classes.rounded}}>
                     <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
                       <Typography variant='overline'>{txt.igalod.municipalityCatalog}</Typography>

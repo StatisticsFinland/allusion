@@ -594,6 +594,8 @@ class Map extends Component {
     let nameCandidate = this.getUniqueName(name, savedCustomAreas);
 
     let areaToSave = new ModifiableFeatureUnion(nameCandidate, selection);
+    this.drawerRef.catRef.emptySelections();
+    savedCustomAreas.forEach(f => f.deactivate());
     this.setState({savedCustomAreas: [...savedCustomAreas, areaToSave]});
   };
 
@@ -614,7 +616,7 @@ class Map extends Component {
       let nameCandidate = this.getUniqueName(area.name, savedCustomAreas);
       return new ModifiableFeatureUnion(nameCandidate, area.selection);
     });
-
+    this.drawerRef.catRef.emptySelections();
     this.setState({savedCustomAreas: [...savedCustomAreas, ...newAreas]});
   };
 
@@ -634,7 +636,7 @@ class Map extends Component {
     if (munisToDeselect.length) {
       this.drawerRef.catRef.removeFromSelection(munisToDeselect);
     }
-
+    this.drawerRef.catRef.addRemoveCustomMunids([], area.selection);
     this.setState({savedCustomAreas: [...otherAreas, area]}, () => this.changeMuns(area.selection));
   };
 
@@ -644,6 +646,7 @@ class Map extends Component {
     let otherAreas = savedCustomAreas.filter(area => area.id !== id);
     const selection = [...this.state.selection];
     area.saveModifications(this.getUniqueName(name, otherAreas), selection);
+    this.drawerRef.catRef.addRemoveCustomMunids(area.selection);
     this.setState({savedCustomAreas: [...otherAreas, area]}, () => this.changeMuns(selection));
   };
 
