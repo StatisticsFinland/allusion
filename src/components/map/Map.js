@@ -29,7 +29,7 @@ import Spinner from './../Spinner';
 import {numericSort} from 'simple-statistics'
 import chroma from 'chroma-js';
 import Legend from './Legend';
-import calculateUnionAggregate from "./functions/calculateUnionAggregate";
+import {FeatureUnion, ModifiableFeatureUnion} from './FeatureUnion';
 import uuid from "./functions/uuid";
 import queryString from 'query-string';
 
@@ -65,6 +65,9 @@ class Map extends Component {
     loading: false,
     selection: [],
     savedAreas: [],
+    savedFeatureUnions: [],
+    regionFeatureUnions: [],
+    majorRegionFeatureUnions: [],
     savedCustomAreas: [],
     variable: '',
     selectedLayer: null,
@@ -349,8 +352,7 @@ class Map extends Component {
     const basemapOpacity = Number(this.state.basemapOpacity).toFixed(2);
     const layerOpacity = Number(this.state.layerOpacity).toFixed(2);
     const layer = this.props.selectedLayer ? this.props.selectedLayer.uuid : null;
-    const mapValues = {x: x, y: y, z: z, b: basemap, bo: basemapOpacity, lo: layerOpacity, layer: layer};
-    return mapValues;
+    return {x: x, y: y, z: z, b: basemap, bo: basemapOpacity, lo: layerOpacity, layer: layer};
   };
 
   prepareStyle = (layer, features, property) => {
@@ -386,8 +388,7 @@ class Map extends Component {
       let rawColors = chroma.scale('Blues').colors(numClasses);
       let colors = rawColors.map(col => {
         let c = chroma(col).rgba();
-        let rgba = `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${c[3]})`;
-        return rgba;
+        return `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${c[3]})`;
       });
 
       style.fieldValues = calculateBreaks(values, numClasses, 'ckmeans');
@@ -443,14 +444,29 @@ class Map extends Component {
       ret = true;
       const layer = this.getLayerByName('Municipalities');
       let source = layer.getSource();
-      source.clear();
-      source.addFeatures(regMuns);
+      if (source.getFeatures().length < regMuns.length) {
+        source.clear();
+        source.addFeatures(regMuns);
 
+        let regionFeatureUnions = [];
+        let majorRegionFeatureUnions = [];
 
-      const munsByRegion = _.groupBy(regMuns, mun => mun.get('secondCode'));
-      Object.keys(munsByRegion).sort((a, b) => parseInt(a) - parseInt(b)).forEach(regCode => {
-        this.saveCustomArea(munsByRegion[regCode][0].get('second'), munsByRegion[regCode].map(mun => mun.get('firstCode')));
-      });
+        const object = _.groupBy(regMuns, mun => mun.get('second'));
+        _.forOwn(object, (muns, regName) => {
+          regionFeatureUnions.push(
+              new FeatureUnion(regName, muns.map(mun => mun.get('firstCode')))
+          );
+        });
+
+        _.forOwn(_.groupBy(regMuns, mun => mun.get('third')), (muns, regName) => {
+          majorRegionFeatureUnions.push(
+              new FeatureUnion(regName, muns.map(mun => mun.get('firstCode')))
+          );
+        });
+
+        this.setState({regionFeatureUnions, majorRegionFeatureUnions});
+
+      }
     }
     return ret;
   };
@@ -490,7 +506,7 @@ class Map extends Component {
               .map(area => {
                 // TODO: Modify if wanted to have municipality in multiple areas
                 let customAreaFeatures = features.filter(feature => _.includes(area.selection, feature.get('municipalityCode')));
-                let customAreaFeature = calculateUnionAggregate(customAreaFeatures, statisticalVariable, area.name);
+                let customAreaFeature = area.getUnionFromFeatures(customAreaFeatures, statisticalVariable);
                 if (customAreaFeature) {
                   source.addFeature(customAreaFeature);
                 }
@@ -547,28 +563,29 @@ class Map extends Component {
 
   saveCustomArea = (name, selection = [...this.state.selection]) => {
     const savedCustomAreas = [...this.state.savedCustomAreas];
-    let areaToSave = {
-      id: uuid(),
-      name,
-      selection,
-      beingModified: false,
-      activated: false
-    };
-    if (!savedCustomAreas.some(area => area.name === name)) {
-      this.setState({savedCustomAreas: [...savedCustomAreas, areaToSave]});
-    }
+    let nameCandidate = this.getUniqueName(name, savedCustomAreas);
+
+    let areaToSave = new ModifiableFeatureUnion(nameCandidate, selection);
+    this.setState({savedCustomAreas: [...savedCustomAreas, areaToSave]});
   };
+
+  getUniqueName(name, savedCustomAreas) {
+    const charsToAppend = [...Array(100).keys()].map(k => String(k));
+    let nameCandidate = name;
+    let i = 1;
+    while (savedCustomAreas.some(area => area.name === nameCandidate)) {
+      nameCandidate = name + charsToAppend[i];
+      i++;
+    }
+    return nameCandidate;
+  }
 
   saveMultipleCustomAreas = areas => {
     const savedCustomAreas = [...this.state.savedCustomAreas];
-    const newAreas = areas.map(area => new Object({
-      id: uuid(),
-      "order": savedCustomAreas.length + 1,
-      name: area.name,
-      selection: area.selection,
-      beingModified: false,
-      activated: false
-    })).filter(area => !savedCustomAreas.some(area2 => area2.name === area.name));
+    const newAreas = areas.map(area => {
+      let nameCandidate = this.getUniqueName(area.name, savedCustomAreas);
+      return new ModifiableFeatureUnion(nameCandidate, area.selection);
+    });
 
     this.setState({savedCustomAreas: [...savedCustomAreas, ...newAreas]});
   };
@@ -576,14 +593,13 @@ class Map extends Component {
   modifyCustomArea = area => {
     let id = area.id;
     let savedCustomAreas = [...this.state.savedCustomAreas];
-    area.beingModified = true;
-    area.activated = true;
+    area.startModifying();
     let otherAreas = savedCustomAreas.filter(area => area.id !== id);
     // Deactivate other custom areas
     let munisToDeselect = [];
     otherAreas.forEach(area2 => {
       if (area2.activated) {
-        area2.activated = false;
+        area2.deactivate();
         munisToDeselect = _.union(munisToDeselect, _.difference(area2.selection, area.selection));
       }
     });
@@ -597,29 +613,28 @@ class Map extends Component {
   saveCustomAreaModification = (area, name) => {
     let id = area.id;
     let savedCustomAreas = [...this.state.savedCustomAreas];
-    const selection = [...this.state.selection];
-    area.beingModified = false;
-    area.name = name;
-    area.selection = selection;
     let otherAreas = savedCustomAreas.filter(area => area.id !== id);
+    const selection = [...this.state.selection];
+    area.saveModifications(this.getUniqueName(name, otherAreas), selection);
     this.setState({savedCustomAreas: [...otherAreas, area]}, () => this.changeMuns(selection));
   };
-
 
   toggleCustomAreaActivation = (area, state) => {
     let id = area.id;
     let savedCustomAreas = [...this.state.savedCustomAreas];
-    area.activated = state;
     let otherAreas = savedCustomAreas.filter(area => area.id !== id);
     let munisToDeselect = [];
     if (state) {
+      area.activate();
       // Deactivate the custom areas with same municipalities
       otherAreas.forEach(area2 => {
         if (area2.activated && _.intersection(area.selection, area2.selection).length) {
-          area2.activated = false;
+          area2.deactivate();
           munisToDeselect = _.union(munisToDeselect, _.difference(area2.selection, area.selection));
         }
       });
+    } else {
+      area.deactivate();
     }
 
     this.setState({savedCustomAreas: [...otherAreas, area]});
