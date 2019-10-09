@@ -108,9 +108,13 @@
             "Save",
             "Tallenna"
         ],
-      "showAllCustomAreas": [
+        "showAll": [
         "Select all",
         "Valitse kaikki"
+        ],
+        "selectAllMunis": [
+            "Select all municipalities",
+            "Valitse kaikki kunnat"
         ]
     },
     "button": {

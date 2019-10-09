@@ -6,8 +6,8 @@ import combine from "@turf/combine";
 import * as _ from "lodash";
 
 class FeatureUnion {
-  constructor(name, selection = []) {
-    this.id = uuidv4();
+  constructor(id, name, selection = []) {
+    this.id = id;
     this.name = name;
     this.selection = selection;
     this.activated = false;
@@ -19,6 +19,14 @@ class FeatureUnion {
 
   deactivate() {
     this.activated = false;
+  }
+
+  setActive(state) {
+    if (state) {
+      this.activate();
+    } else {
+      this.deactivate();
+    }
   }
 
   /* Function to calculate aggregated  of the features */
@@ -64,8 +72,10 @@ class FeatureUnion {
   /* Function to calculate union of the features */
   getUnionFromFeatures(features, statisticalField) {
     let format = new GeoJSON();
-    if (features.length > 2) {
-      features[0].set('customAreaName', this.name);
+    if (features.length < 2) {
+      if (features.length === 1) {
+        features[0].set('customAreaName', this.name);
+      }
       return features[0];
     }
 
@@ -89,7 +99,7 @@ class FeatureUnion {
 
 class ModifiableFeatureUnion extends FeatureUnion {
   constructor(name, selection) {
-    super(name, selection);
+    super(uuidv4(), name, selection);
     this.beingModified = false;
   }
 

@@ -142,7 +142,7 @@ class SavedAreaCatalog extends Component {
                   button
                   disableGutters={true}
               >
-                <ListItemText key={`listitemtext_all_custom_areas`} primary={txt.igalod.showAllCustomAreas}/>
+                <ListItemText key={`listitemtext_all_custom_areas`} primary={txt.igalod.showAll}/>
               </ListItem>
             </div>
             }

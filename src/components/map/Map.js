@@ -407,8 +407,19 @@ class Map extends Component {
     return this.map.getLayers().getArray().find(layer => layer.getProperties().name === name);
   };
 
-  changeMuns = selection => {
-    this.setState({selection}, () => {
+  changeMuns = (selection, regIds = [], majorRegids = []) => {
+    const regionFeatureUnions = this.state.regionFeatureUnions.map(f => {
+      f.setActive(regIds.includes(f.id));
+      return f;
+    });
+
+    const majorRegionFeatureUnions = this.state.majorRegionFeatureUnions.map(f => {
+      f.setActive(majorRegids.includes(f.id));
+      return f;
+    });
+
+
+    this.setState({selection, regionFeatureUnions, majorRegionFeatureUnions}, () => {
       this.props.handleSelectingMunips(selection);
     });
 
@@ -454,13 +465,13 @@ class Map extends Component {
         const object = _.groupBy(regMuns, mun => mun.get('second'));
         _.forOwn(object, (muns, regName) => {
           regionFeatureUnions.push(
-              new FeatureUnion(regName, muns.map(mun => mun.get('firstCode')))
+              new FeatureUnion(muns[0].get('secondCode'), regName, muns.map(mun => mun.get('firstCode')))
           );
         });
 
         _.forOwn(_.groupBy(regMuns, mun => mun.get('third')), (muns, regName) => {
           majorRegionFeatureUnions.push(
-              new FeatureUnion(regName, muns.map(mun => mun.get('firstCode')))
+              new FeatureUnion(muns[0].get('thirdCode'), regName, muns.map(mun => mun.get('firstCode')))
           );
         });
 
@@ -497,23 +508,40 @@ class Map extends Component {
       }
     }, () => {
 
+      let featuresBelongingToRegions = [...new Set(
+          this.state.regionFeatureUnions
+              .filter(f => f.activated)
+              .flatMap(union => {
+                let unionFeatures = features.filter(feature => union.selection.includes(feature.get('municipalityCode')));
+                let unionFeature = union.getUnionFromFeatures(unionFeatures, statisticalVariable);
+                unionFeature && source.addFeature(unionFeature);
+                return unionFeatures;
+              }))];
 
-      const savedCustomAreas = this.state.savedCustomAreas;
+      let featuresBelongingToMajorRegions = [...new Set(
+          this.state.majorRegionFeatureUnions
+              .filter(f => f.activated)
+              .flatMap(union => {
+                let unionFeatures = features.filter(feature => union.selection.includes(feature.get('municipalityCode')));
+                let unionFeature = union.getUnionFromFeatures(unionFeatures, statisticalVariable);
+                unionFeature && source.addFeature(unionFeature);
+                return unionFeatures;
+              }))];
 
-      let featuresBelongingToCustomAreas = _.uniq(_.flatten(
-          savedCustomAreas
+
+      let featuresBelongingToCustomAreas = [...new Set(
+          this.state.savedCustomAreas
               .filter(area => area.activated && !area.beingModified)
-              .map(area => {
+              .flatMap(area => {
                 // TODO: Modify if wanted to have municipality in multiple areas
-                let customAreaFeatures = features.filter(feature => _.includes(area.selection, feature.get('municipalityCode')));
-                let customAreaFeature = area.getUnionFromFeatures(customAreaFeatures, statisticalVariable);
-                if (customAreaFeature) {
-                  source.addFeature(customAreaFeature);
-                }
-                return customAreaFeatures;
-              })));
+                let unionFeatures = features.filter(feature => _.includes(area.selection, feature.get('municipalityCode')));
+                let unionFeature = area.getUnionFromFeatures(unionFeatures, statisticalVariable);
+                unionFeature && source.addFeature(unionFeature);
+                return unionFeatures;
+              }))];
 
-      let remainingFeatures = _.difference(features, featuresBelongingToCustomAreas);
+      let remainingFeatures = _.difference(features, featuresBelongingToCustomAreas,
+          featuresBelongingToMajorRegions, featuresBelongingToRegions);
       if (remainingFeatures.length > 0) {
         source.addFeatures(remainingFeatures);
       }
@@ -666,7 +694,12 @@ class Map extends Component {
   deleteCustomArea = id => {
     let savedCustomAreas = this.state.savedCustomAreas.filter(area => area.id !== id);
     let selection = [...this.state.selection];
-    this.setState({savedCustomAreas}, () => this.changeMuns(selection));
+    this.setState({savedCustomAreas},
+        () => this.changeMuns(selection,
+            this.state.regionFeatureUnions.filter(f => f.activated)
+                .map(f => f.id),
+            this.state.majorRegionFeatureUnions.filter(f => f.activated)
+                .map(f => f.id)));
   };
 
   relateToArea = event => {
