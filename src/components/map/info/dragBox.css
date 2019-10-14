@@ -1,0 +1,7 @@
+.ol-dragbox {
+    background: rgba(255,255,255,0.5);
+    border-width: thin;
+    border-radius: 8px;
+    border-style: solid;
+    border-color: rgba(66, 134, 244, 0.75);
+  }

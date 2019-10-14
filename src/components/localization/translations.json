@@ -1,0 +1,432 @@
+{
+    "scale": [
+        "Scale of administrative borders",
+        "Rajojen mittakaava"
+    ],
+    "igalod": {
+        "funding": [
+            "The service is partly funded by Eurostat.",
+            "Palvelu on toteutettu osittain Eurostatin rahoituksella."
+        ],
+        "developedBy": [
+            "This service prototype has been developed by Ubigu Ltd.",
+            "Pilottipalvelun toteutuksesta on vastannut Ubigu Oy."
+        ],
+        "meta": [
+            "You can find more information behind this link in section: About table / Footnotes",
+            "Lisätietoja löydät tämän linkin takaa osiosta: Tietoja taulukosta - Alaviitteet"
+        ],
+        "grand": [
+            "Major regions",
+            "Suuralueet"
+        ],
+        "parent": [
+            "Regions",
+            "Maakunnat"
+        ],
+        "showNUTS": [
+            "Show NUTS codes",
+            "Näytä NUTS-koodit"
+        ],
+        "hideNUTS": [
+            "Hide NUTS codes",
+            "Piilota NUTS-koodit"
+        ],
+        "relative": [
+            "Relative to area",
+            "Suhteuta pinta-alaan"
+        ],
+        "emptySelections": [
+            "Empty selections",
+            "Tyhjennä valinnat"
+        ],
+        "noStats": [
+            "No statistics",
+            "Ei tilastoa"
+        ],
+        "generalInfo": [
+            "Welcome to use ALLUsion BETA, a service by Statistics Finland and the National Land Survey of Finland. The idea behind the service is to utilize principles of 'linked data' - in this case, the service combines data from the two aforementioned authorities by linking RDF-structured data semantically on-the-fly. The information is fetched from APIs of Statistics Finland and National Land Survey of Finland:",
+            "Tervetuloa käyttämään ALLUsion -palvelun BETA-versiota. Palvelusta vastaavat Tilastokeskus ja Maanmittauslaitos. Palvelun ideana on hyödyntää niin sanottua yhdistettyä tietoa. Tässä tapauksessa tämä tarkoittaa sitä, että palvelu yhdistelee 'lennosta' kahden edellä mainitun viranomaisen semanttisesti yhteensopivia RDF-muotoisia tietoja. Tiedot haetaan Tilastokeskuksen ja Maanmittauslaitoksen rajapintapalveluista:"
+        ],
+        "statisticsNote": [
+            "Partial municipal mergers have been taken into account since 2017 in this dataset.",
+            "Osakuntaliitokset on huomioitu tässä käytetyssä aluejakodatassa vuodesta 2017."
+        ],
+        "ownAreas": [
+            "Own area selections",
+            "Omat aluevalinnat"
+        ],
+        "settings": [
+            "Settings",
+            "Asetukset"
+        ],
+        "statYear": [
+            "Statistics year",
+            "Tilastovuosi"
+        ],
+        "municipalityCatalog": [
+            "Select areas",
+            "Aluevalinta"
+        ],
+        "newArea": [
+            "Name for area selection",
+            "Nimeä aluevalinta"
+        ],
+        "selectFirst": [
+            "Select areas first",
+            "Valitse ensin alueita"
+        ],
+        "municipYear": [
+            "Administrative units data year",
+            "Aluejakoaineiston vuosi"
+        ],
+        "landScale": [
+            "Scale of the administrative units data",
+            "Aluejakoaineiston mittakaava"
+        ],
+        "seaAreas": [
+            "Include sea areas",
+            "Sisällytä merialueet"
+        ],
+        "yes": [
+            "Yes",
+            "Kyllä"
+        ],
+        "no": [
+            "No",
+            "Ei"
+        ]
+    },
+    "button": {
+        "cancel": [
+            "Cancel",
+            "Peruuta"
+        ],
+        "delete": [
+            "Delete",
+            "Poista"
+        ],
+        "submit": [
+            "Submit",
+            "Lähetä"
+        ],
+        "back": [
+            "Back",
+            "Takaisin"
+        ],
+        "next": [
+            "Next",
+            "Seuraava"
+        ],
+        "finish": [
+            "Finish",
+            "Valmis"
+        ],
+        "update": [
+            "Update / replace",
+            "Päivitä / korvaa"
+        ],
+        "saveNew": [
+            "Save as new",
+            "Tallenna uutena"
+        ],
+        "legend": [
+            "Show legend",
+            "Näytä selite"
+        ],
+        "move": [
+            "Move dialog",
+            "Siirrä valikkoa"
+        ],
+        "close": [
+            "Close",
+            "Sulje"
+        ]
+    },
+    "search": {
+        "title": [
+            "Search",
+            "Haku"
+        ],
+        "description": [
+            "Search by ZIP code",
+            "Hae postinumeroalueittain"
+        ]
+    },
+    "layerDrawer": {
+        "statistics": [
+            "Statistics",
+            "Tilastotieto"
+        ],
+        "selected": [
+            "Own selections",
+            "Omat valinnat"
+        ],
+        "basemaps": [
+            "Basemaps",
+            "Taustakartat"
+        ],
+        "catalog": [
+            "Map catalog",
+            "Karttavalikko"
+        ],
+        "selectFirst": [
+            "Please select a layer from the map catalog.",
+            "Ole hyvä ja valitse ensin karttataso."
+        ],
+        "addLayer": [
+            "Add layer",
+            "Lisää kartta"
+        ]
+    },
+    "searchDialog": {
+        "municipality": [
+            "Search by municipality",
+            "Etsi kunnan perusteella"
+        ],
+        "address": [
+            "Or search by address or place",
+            "Tai etsi paikan tai osoitteen perustella"
+        ],
+        "typein": [
+            "Type in address or place",
+            "Kirjoita osoite tai paikka"
+        ]
+    },
+    "infoDialog": {
+        "table": [
+            "Table",
+            "Taulukko"
+        ],
+        "title": [
+            "Information about the service",
+            "Tietoa palvelusta"
+        ],
+        "generalTitle": [
+            "General",
+            "Yleistä"
+        ],
+        "generalTools": [
+            "General navigation",
+            "Sovelluksen navigointi"
+        ],
+        "navigationTitle": [
+            "Navigation",
+            "Navigointi"
+        ],
+        "administrationTitle": [
+            "Administration",
+            "Hallinta"
+        ],
+        "general": [
+            "Welcome to use Region Syddanmark's Data2Go map service. The service provides you with numerous thematic maps and accompanying information, describing the Southern Denmark region and in some cases, the whole of Denmark, in regards to several regional development indicators such as demographics, socioeconomics, life quality and urban functionality.",
+            "Velkommen til at bruge Region Syddanmarks Data2Go-korttjeneste. Tjenesten giver dig talrige tematiske kort og ledsagende informationer, der beskriver regionen Syddanmark og i nogle tilfælde hele Danmark med hensyn til flere regionale udviklingsindikatorer som demografi, socioøkonomi, livskvalitet og byfunktionalitet."
+        ],
+        "naviZoom": [
+            "Buttons for zooming the map. You can also use the mouse wheel or touch gestures for zooming the map.",
+            "Näiden painikkeiden avulla voit loitontaa tai lähentää karttaa. Voit myös käyttää hiiren rullaa tai kosketusnäyttöä kartan mittakaavan muuttamiseen."
+        ],
+        "selection": [
+            "In the statistics table view:",
+            "Aggregoitua tietoa taulukossa:"
+        ],
+        "step1": [
+            "1. Select areas and adjust any other settings on the left, and content will be created on the map.",
+            "1. Tee aluevalinta ja muut valinnat vasemmalta, jolloin saat alueet näkyviin kartalle."
+        ],
+        "step2": [
+            "2. When items have been rendered on the map, you may click them with the mouse or by touch gestures (on touch screen devices)",
+            "2. Kun kohteita on valittu kartalle näkyviin, niitä voi klikata hiirellä tai koskettamalla (kosketusnäytöllisillä laitteilla)"
+        ],
+        "step3a": [
+            "3a. You may select multiple features on the map by holding the SHIFT-key and clicking features with the mouse.",
+            "3a. Voit valita usean kohteen pitämällä SHIFT-näppäimen pohjassa ja klikkaamalla kohteita."
+        ],
+        "step3b": [
+            "3b. Another approach for selecting multiple features is to hold the CTRL key, click the map with the mouse and drag a selection box over the features you wish to select.",
+            "3b. Toinen tapa valita useampi kohde on painaa CTRL-näppäin pohjaan ja vetää hiirellä kartalle alue hiiren näppäin pohjassa. "
+        ],
+        "step4": [
+            "4. A table will open, which contains aggregated statistics (for the selected statistic) for your selection as well as individual information for the features.",
+            "4. Taulukko aukeaa, jossa on aggregoitua tietoa valitusta tilastomuuttujasta sekä valittujen kohteiden yksilölliset tiedot."
+        ],
+        "naviMenu": [
+            "Administrative areas, statistics and basemaps are chosen through the Main menu. Areas can be chosen through 'Select areas' submenu. In 'Settings' submenu can be changed the type of the fetched administrative units' geometry. Selections can be saved in 'Own area selections' submenu. Statistics to be shown on the map can be selected in 'Statistics' submenu. In the 'Basemaps' submenu, the basemap can be selected.",
+            "Aluevalinnat, tilastot ja taustakartat valitaan Valikosta. Aluevalinnan voi tehdä 'Aluevalinta' -alavalikon alta. 'Asetukset'-alavalikosta voidaan vaihtaa haettavien aluerajausgeometrioiden tyyppiä. Valintoja voi tallentaa 'Omat aluevalinnat' -alavalikossa. 'Tilastotieto' -alavalikosta voi valita kartalla näytettävän tilaston. 'Taustakartat'-alavalikosta voi valita haluamansa taustakartan."
+        ],
+        "naviToolbarSimple": [
+            "Toolbar",
+            "Työkalupalkki (klikkaa nähdäksesi lisätiedot)"
+        ],
+        "naviToolbar": [
+            "Toolbar (click item text for detailed description)",
+            "Työkalupalkki"
+        ],
+        "naviTable": [
+            "The statistics / info table displays both individual information and aggregated statistics on the selected features or alternative all features in case no selection has been made on the map. The table's contents respond to changes made in the statistics menu or area selections, as well as any selection interactions made on the map.",
+            "Tilasto- / taulunäkymä esittää sekä yksilöllisiä tietoja että aggregoituja tilastoja valituista kohteista, tai vaihtoehtoisesti kaikista kohteista, mikäli valintaa ei ole tehty. Taulun sisältö reagoi muutoksiin tehdyissä valinnoissa kartalla sekä käyttäjän tekemiin tilastovalintoihin."
+        ],
+        "naviLabels": [
+            "Shows or hides labels on the map.",
+            "Karttanimiöt tulevat näkyviin vain, kun kartta on lähennetty riittävän tarkalle mittakaavatasolle. Painike ei ole käytettävissä silloin, kun kartalla ei ole kohteita."
+        ],
+        "naviTableTop": [
+            "Opens the statistics /info table",
+            "Avaa tilasto/taulunäkymän"
+        ],
+        "naviLabelsTop": [
+            "Shows or hides labels on the map.",
+            "Näyttää tai piilottaa karttanimiöt"
+        ],
+        "naviLoginTop": [
+            "Login button",
+            "Kirjautumispainike"
+        ],
+        "naviLogin": [
+            "The login button opens the login dialog. Those provided with a user name and password can access administrative capabilities, such as adding and editing layers and charts. When logged in, the lock avatar changes to locked.",
+            "Kirjautumispainike avaa kirjautumisikkunan. Ne, joilla on käyttäjätunnus ja salasana, voivat päästä käsiksi palvelun järjestelmänvalvoja-ominaisuuksiin ('admin')."
+        ],
+        "naviChartTop": [
+            "Charts for the map layer",
+            "Kaavioita valitulle karttatasolle"
+        ],
+        "naviTimeTop": [
+            "Time manager",
+            "Aikavalinta"
+        ],
+        "naviSearchTop": [
+            "Seach functionalities",
+            "Haku-toiminnallisuudet"
+        ],
+        "naviSearch": [
+            "This button opens the search dialog, through which you can select a municipality (grouped by region) or write a place or address, to which the map will be centered. Typing in an address and pressing the search button or Enter key gives you a list of 10 most matching results, from which to choose.",
+            "Tämä painike avaa hakuikkunan, mistä voit etsiä haluamaasi kuntaa tai kirjoittaa paikannimen tai osoitteen, johon kartta kohdentuu. Kun kirjoitat osoitteen tai paikannimen hakukenttään ja suurennuslasipainiketta tai ENTER-näppäintä, palvelu etsii ja näyttää 10 parhaiten hakua vastaavaa tulosta."
+        ],
+        "naviInfoTop": [
+            "User guide and documentation",
+            "Tietoa palvelusta ja sen käyttämisestä."
+        ],
+        "naviInfo": [
+            "Opens this information and guidance dialog.",
+            "Avaa tämän info-ikkunan."
+        ],
+        "naviLangTop": [
+            "Application language",
+            "Palvelun kielen valinta"
+        ],
+        "naviLang": [
+            "Change the language of the application interface - currently available in Finnish and English.",
+            "Vaihda palvelun kieli. Tällä hetkellä tuettuja vaihtoehtoja ovat suomi ja englanti."
+        ]
+    },
+    "charts": {
+        "selectFirst": [
+            "Please select a layer from the map catalog first!",
+            "Ole hyvä ja valitse ensin karttataso valikosta!"
+        ],
+        "chartList": [
+            "Available charts",
+            "Saatavilla olevat kaaviot"
+        ],
+        "name": [
+            "Name",
+            "Nimi"
+        ],
+        "noCharts": [
+            "No charts available for this layer",
+            "Kaavioita ei saatavilla tälle karttatasolle"
+        ],
+        "groupBy": [
+            "Group by",
+            "Ryhmittele"
+        ],
+        "data": [
+            "Data field",
+            "Tietokenttä"
+        ],
+        "stat": [
+            "Statistic",
+            "Tilasto"
+        ],
+        "sum": [
+            "Sum",
+            "Summa"
+        ],
+        "median": [
+            "Median",
+            "Mediaani"
+        ],
+        "mean": [
+            "Mean",
+            "Keskiarvo"
+        ],
+        "min": [
+            "Minimum",
+            "Minimi"
+        ],
+        "max": [
+            "Maximum",
+            "Maksimi"
+        ],
+        "type": [
+            "Chart type",
+            "Kaaviotyyppi"
+        ],
+        "pie": [
+            "Pie",
+            "Piirakka"
+        ],
+        "bar": [
+            "Bar",
+            "Pylväs"
+        ],
+        "legend": [
+            "Show legend",
+            "Näytä karttaselite"
+        ]
+    },
+    "toolbar": {
+        "showLabels": [
+            "Show map labels (when zoomed in)",
+            "Näytä karttanimiöt (karttaa lähennettäessä)"
+        ],
+        "hideLabels": [
+            "Hide map labels",
+            "Piilota karttanimiöt"
+        ],
+        "table": [
+            "Open table view",
+            "Avaa taulukkonäkymä"
+        ],
+        "search": [
+            "Search",
+            "Etsi"
+        ],
+        "info": [
+            "Information",
+            "Tietoa"
+        ],
+        "layer": [
+            "Main menu",
+            "Valikko"
+        ],
+        "language": [
+            "Language",
+            "Kieli"
+        ]
+    },
+    "mapInfo": {
+        "stats": [
+            "Statistics",
+            "Tilastot"
+        ],
+        "field": [
+            "Field",
+            "Kenttä"
+        ],
+        "selected": [
+            "Info for selected features",
+            "Tietoa valituista kohteista"
+        ]
+    }
+}
