@@ -14,6 +14,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import BasemapControl from './BasemapControl';
 import StatisticsCatalog from './StatisticsCatalog';
 import MunicipalityCatalog from './MunicipalityCatalog';
+import flatten from 'lodash/flatten';
 
 import {LanguageContext} from './../../App';
 import SavedAreaCatalog from "./SavedAreaCatalog";
@@ -111,9 +112,9 @@ class LayerDrawer extends Component {
 
   toggleAllCustomAreas = (selectionState) => {
     //TODO: Fix this
-    let selection = [...this.props.savedCustomAreas.flatMap(area => area.selection)];
-    let munisToDeselect = this.props.savedCustomAreas
-        .flatMap(area => this.props.toggleCustomAreaActivation(area, selectionState));
+    let selection = flatten([...this.props.savedCustomAreas.map(area => area.selection)]);
+    let munisToDeselect = flatten(this.props.savedCustomAreas
+        .map(area => this.props.toggleCustomAreaActivation(area, selectionState)));
     if (selectionState) {
       this.catRef.addRemoveCustomMunids(selection, munisToDeselect);
     } else {

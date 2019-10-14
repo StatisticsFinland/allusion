@@ -1,8 +1,10 @@
-/* Controller for fetching municipality / region related information*/
-
+import 'url-search-params-polyfill'; // For making the URLSearchParams work with Edge
 /* URL for feching regions and municipalities (MML) */
 import WKT from "ol/format/WKT";
 import {EPSG3067} from "../components/map/projection/projections";
+
+/* Controller for fetching municipality / region related information*/
+
 
 const baseUrl = 'https://statfin-rdf-dev.azurewebsites.net/igalod/query';
 const geomUrl = 'http://193.167.189.160/igalod/fuseki/ds/query';

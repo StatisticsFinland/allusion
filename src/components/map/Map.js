@@ -508,37 +508,37 @@ class Map extends Component {
       }
     }, () => {
 
-      let featuresBelongingToRegions = [...new Set(
+      let featuresBelongingToRegions = _.flatten([...new Set(
           this.state.regionFeatureUnions
               .filter(f => f.activated)
-              .flatMap(union => {
+              .map(union => {
                 let unionFeatures = features.filter(feature => union.selection.includes(feature.get('municipalityCode')));
                 let unionFeature = union.getUnionFromFeatures(unionFeatures, statisticalVariable);
                 unionFeature && source.addFeature(unionFeature);
                 return unionFeatures;
-              }))];
+              }))]);
 
-      let featuresBelongingToMajorRegions = [...new Set(
+      let featuresBelongingToMajorRegions = _.flatten([...new Set(
           this.state.majorRegionFeatureUnions
               .filter(f => f.activated)
-              .flatMap(union => {
+              .map(union => {
                 let unionFeatures = features.filter(feature => union.selection.includes(feature.get('municipalityCode')));
                 let unionFeature = union.getUnionFromFeatures(unionFeatures, statisticalVariable);
                 unionFeature && source.addFeature(unionFeature);
                 return unionFeatures;
-              }))];
+              }))]);
 
 
-      let featuresBelongingToCustomAreas = [...new Set(
+      let featuresBelongingToCustomAreas = _.flatten([...new Set(
           this.state.savedCustomAreas
               .filter(area => area.activated && !area.beingModified)
-              .flatMap(area => {
+              .map(area => {
                 // TODO: Modify if wanted to have municipality in multiple areas
                 let unionFeatures = features.filter(feature => _.includes(area.selection, feature.get('municipalityCode')));
                 let unionFeature = area.getUnionFromFeatures(unionFeatures, statisticalVariable);
                 unionFeature && source.addFeature(unionFeature);
                 return unionFeatures;
-              }))];
+              }))]);
 
       let remainingFeatures = _.difference(features, featuresBelongingToCustomAreas,
           featuresBelongingToMajorRegions, featuresBelongingToRegions);

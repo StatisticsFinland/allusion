@@ -60,6 +60,7 @@
     "request": "^2.88.0",
     "save-svg-as-png": "^1.4.12",
     "simple-statistics": "^7.0.2",
+    "url-search-params-polyfill": "^7.0.0",
     "validator": "^10.11.0"
   },
   "devDependencies": {
