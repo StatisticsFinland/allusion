@@ -624,7 +624,9 @@ class Map extends Component {
       let nameCandidate = this.getUniqueName(area.name, savedCustomAreas);
       return new ModifiableFeatureUnion(nameCandidate, area.selection);
     });
-    this.drawerRef.catRef.emptySelections();
+    if (this.drawerRef) {
+      this.drawerRef.catRef.emptySelections();
+    }
     this.setState({savedCustomAreas: [...savedCustomAreas, ...newAreas]});
   };
 
@@ -681,13 +683,15 @@ class Map extends Component {
   addCustomAreasFromQuery = qs => {
     if (qs) {
       try {
-        const parsedAreas = queryString.parse(qs);
+        const parsedAreas = queryString.parse(qs, {arrayFormat: 'bracket'});
         let i = 0;
         let areas = [];
         for (i = 0; i < parsedAreas.name.length; i++) {
           let sel = parsedAreas.selection[i].split(",");
           areas.push({name: parsedAreas.name[i], selection: sel[0] !== "" ? sel : []});
         }
+
+
         areas.length && this.saveMultipleCustomAreas(areas);
       } catch (e) {
         console.error("Could not parse area param", e);

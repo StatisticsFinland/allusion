@@ -62,7 +62,7 @@ class SavedAreaCatalog extends Component {
     const areas = queryString.stringify({
       name: names,
       selection: selections
-    });
+    }, {arrayFormat: 'bracket'});
     window.prompt(this.props.txt.shareDialog.copy, `${window.location.href}?${areas}`);
   };
 
