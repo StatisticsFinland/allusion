@@ -359,6 +359,10 @@
     "bringMajorRegions": [
       "Bring major regions",
       "Tuo suuralueet"
+    ],
+    "deleteConfirmation": [
+      "Are you sure you want to delete the feature?",
+      "Haluatko varmasti poistaa kohteen?"
     ]
   },
   "shareDialog": {

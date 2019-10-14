@@ -111,7 +111,8 @@ class SavedAreaCatalog extends Component {
             onClick={() => {
               this.startModifyingCustomArea(area);
             }}
-            onDelete={() => this.props.handleCustomAreaDelete(area.id)}
+            onDelete={() => window.confirm(this.props.txt.savedAreasDrawer.deleteConfirmation) &&
+                this.props.handleCustomAreaDelete(area.id)}
             color="primary"
             size="small"
         />
