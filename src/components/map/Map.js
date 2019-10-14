@@ -784,6 +784,7 @@ class Map extends Component {
               editLayerInDB={this.editLayerInDB}
               deleteLayerFromDB={this.deleteLayerFromDB}
               layerDrawerVisibility={this.props.layerDrawerVisibility}
+              savedAreaSelectionVisibility={this.props.savedAreaSelectionVisibility}
               map={this.map}
               basemap={this.state.basemap}
               changeBasemap={this.changeBasemap}

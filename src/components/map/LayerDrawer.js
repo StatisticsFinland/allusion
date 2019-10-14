@@ -239,6 +239,7 @@ class LayerDrawer extends Component {
                     <ExpansionPanelDetails classes={{root: classes.root}}>
                       <div style={{display: 'flex', flexDirection: 'column'}}>
                         <SavedAreaCatalog
+                            savedAreaSelectionVisibility={this.props.savedAreaSelectionVisibility}
                             txt={txt}
                             savedAreas={this.props.savedAreas}
                             savedCustomAreas={this.props.savedCustomAreas}

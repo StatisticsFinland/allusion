@@ -122,7 +122,7 @@ class SavedAreaCatalog extends Component {
 
   render() {
 
-    const {classes, savedAreas, savedCustomAreas, areaName, customAreaName, txt} = this.props;
+    const {classes, savedAreas, savedCustomAreas, areaName, customAreaName, txt, savedAreaSelectionVisibility} = this.props;
 
     return (
         <>
@@ -208,9 +208,11 @@ class SavedAreaCatalog extends Component {
               <Button size='small'  color='primary'>{txt.savedAreasDrawer.bringMajorRegions}</Button>
               <Button size='small'  color='primary'>{txt.savedAreasDrawer.bringRegions}</Button>
             </div>*/}
+
             <Divider/>
           </FormControl>
 
+          {savedAreaSelectionVisibility &&
           <FormControl classes={{root: classes.inputPadding}}>
             <FormLabel>{txt.savedAreasDrawer.ownAreaSelections}</FormLabel>
             <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -238,6 +240,7 @@ class SavedAreaCatalog extends Component {
             <Button color='primary'
                     onClick={() => this.props.saveArea(areaName)}>{txt.button.saveNew}</Button>
           </FormControl>
+          }
         </>
     );
   };

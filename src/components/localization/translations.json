@@ -264,6 +264,10 @@
     ],
     "naviMenu": [
       "Administrative areas, statistics and basemaps are chosen through the Main menu. Areas can be chosen through 'Select areas' submenu. In 'Settings' submenu can be changed the type of the fetched administrative units' geometry. Selections can be saved in 'Own area selections' submenu. Statistics to be shown on the map can be selected in 'Statistics' submenu. In the 'Basemaps' submenu, the basemap can be selected.",
+      "Aluevalinnat, tilastot ja taustakartat valitaan Valikosta. Aluevalinnan voi tehdä 'Aluevalinta' -alavalikon alta. 'Asetukset'-alavalikosta voidaan vaihtaa haettavien aluerajausgeometrioiden tyyppiä. 'Tilastotieto' -alavalikosta voi valita kartalla näytettävän tilaston. 'Taustakartat'-alavalikosta voi valita haluamansa taustakartan."
+    ],
+    "naviMenuOrig": [
+      "Administrative areas, statistics and basemaps are chosen through the Main menu. Areas can be chosen through 'Select areas' submenu. In 'Settings' submenu can be changed the type of the fetched administrative units' geometry. Selections can be saved in 'Own area selections' submenu. Statistics to be shown on the map can be selected in 'Statistics' submenu. In the 'Basemaps' submenu, the basemap can be selected.",
       "Aluevalinnat, tilastot ja taustakartat valitaan Valikosta. Aluevalinnan voi tehdä 'Aluevalinta' -alavalikon alta. 'Asetukset'-alavalikosta voidaan vaihtaa haettavien aluerajausgeometrioiden tyyppiä. Valintoja voi tallentaa 'Omat alueet' -alavalikossa 'Omat aluevalinnat'. 'Tilastotieto' -alavalikosta voi valita kartalla näytettävän tilaston. 'Taustakartat'-alavalikosta voi valita haluamansa taustakartan."
     ],
     "naviToolbarSimple": [

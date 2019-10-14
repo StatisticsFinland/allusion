@@ -40,6 +40,7 @@ class App extends Component {
     showInfo: false,
     showLayerButton: true,
     showInfoDrawer: false,
+    showSavedAreaSelectionDrawer: false,
     logged: false,
     timeValues: null,
     time: null,
@@ -286,31 +287,32 @@ class App extends Component {
           <div className='app'>
             <CssBaseline />
             <Map
-              onRef={ref => (this.mapRef = ref)}
-              urlParameters={this.state.urlParameters}
-              theme={this.state.theme}
-              switchTheme={this.switchTheme}
-              searchDialogVisibility={this.state.showSearch}
-              toggleSearch={() => { this.toggleDialog('Search') }}
-              toggleLayerDrawer={this.toggleLayerDrawer}
-              layerDrawerVisibility={this.state.showLayerDrawer}
-              toggleInfoDrawer={this.toggleInfoDrawer}
-              infoDrawerVisibility={this.state.showInfoDrawer}
-              layers={this.state.layers}
-              selectLayer={this.selectLayer}
-              selectedLayer={this.state.selectedLayer}
-              language={this.state.language ? this.state.language : defaultLanguage}
-              munRegFeatures={this.state.munRegFeatures}
-              statisticsList={this.state.statisticsList}
-              statisticCode={this.state.statisticCode}
-              handleStatisticSelection={this.handleStatisticSelection}
-              handleChangeStatisticYear={this.handleChangeStatisticYear}
-              handleSelectingMunips={this.handleSelectingMunips}
-              statisticYear={this.state.statisticYear}
-              statisticYears={this.state.statisticYears}
-              changeOwnSelection={this.handleOwnSelections}
-              loading={this.state.loading}
-              labels={this.state.labels}
+                onRef={ref => (this.mapRef = ref)}
+                urlParameters={this.state.urlParameters}
+                theme={this.state.theme}
+                switchTheme={this.switchTheme}
+                searchDialogVisibility={this.state.showSearch}
+                toggleSearch={() => { this.toggleDialog('Search') }}
+                toggleLayerDrawer={this.toggleLayerDrawer}
+                layerDrawerVisibility={this.state.showLayerDrawer}
+                toggleInfoDrawer={this.toggleInfoDrawer}
+                infoDrawerVisibility={this.state.showInfoDrawer}
+                savedAreaSelectionVisibility={this.state.showSavedAreaSelectionDrawer}
+                layers={this.state.layers}
+                selectLayer={this.selectLayer}
+                selectedLayer={this.state.selectedLayer}
+                language={this.state.language ? this.state.language : defaultLanguage}
+                munRegFeatures={this.state.munRegFeatures}
+                statisticsList={this.state.statisticsList}
+                statisticCode={this.state.statisticCode}
+                handleStatisticSelection={this.handleStatisticSelection}
+                handleChangeStatisticYear={this.handleChangeStatisticYear}
+                handleSelectingMunips={this.handleSelectingMunips}
+                statisticYear={this.state.statisticYear}
+                statisticYears={this.state.statisticYears}
+                changeOwnSelection={this.handleOwnSelections}
+                loading={this.state.loading}
+                labels={this.state.labels}
             />
             {this.state.showLayerButton &&
               <LayerButton
