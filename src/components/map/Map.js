@@ -165,8 +165,16 @@ class Map extends Component {
     /* Map selection interaction with municipality borders*/
     munBorderSelect.on('select', event => {
       function selectDeselectMuni(code, selection) {
-        !_.includes(selection, code) ? this.drawerRef.catRef.addRemoveFromSelection([code])
-            : this.drawerRef.catRef.addRemoveFromSelection([], [code]);
+        let activeUnionCodes = _.flatten(
+            _.flatten([this.state.savedCustomAreas.filter(f => !f.beingModified),
+              this.state.regionFeatureUnions, this.state.majorRegionFeatureUnions])
+                .filter(f => f.activated)
+                .map(f => f.selection));
+
+        if (!_.includes(activeUnionCodes, code)) {
+          !_.includes(selection, code) ? this.drawerRef.catRef.addRemoveFromSelection([code])
+              : this.drawerRef.catRef.addRemoveFromSelection([], [code]);
+        }
         event.target.getFeatures().clear();
       }
 
