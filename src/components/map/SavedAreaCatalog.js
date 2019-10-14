@@ -130,7 +130,7 @@ class SavedAreaCatalog extends Component {
             <div style={{display: 'flex', flexDirection: 'column'}}>
 
               <FormLabel>{txt.savedAreasDrawer.customUnions}</FormLabel>
-              {savedCustomAreas.length > 0 &&
+              {savedCustomAreas.length > 1000 &&
               <div key={`div_all_custom_areas`} style={{display: 'flex'}}>
                 <Checkbox key={`checkbox_all_custom_areas`}
                           color='primary'
