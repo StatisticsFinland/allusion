@@ -63,7 +63,7 @@ class SavedAreaCatalog extends Component {
       name: names,
       selection: selections
     }, {arrayFormat: 'bracket'});
-    window.prompt(this.props.txt.shareDialog.copy, `${window.location.href}?${areas}`);
+    window.prompt(this.props.txt.shareDialog.copy, `${window.location.href.split('?')[0]}?${areas}`);
   };
 
   populateListItem = area => {
@@ -131,7 +131,7 @@ class SavedAreaCatalog extends Component {
             <div style={{display: 'flex', flexDirection: 'column'}}>
 
               <FormLabel>{txt.savedAreasDrawer.customUnions}</FormLabel>
-              {savedCustomAreas.length > 1000 &&
+              {savedCustomAreas.length > 1 &&
               <div key={`div_all_custom_areas`} style={{display: 'flex'}}>
                 <Checkbox key={`checkbox_all_custom_areas`}
                           color='primary'
