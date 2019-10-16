@@ -3,7 +3,7 @@ import {withStyles} from '@material-ui/core/styles';
 import Popover from '@material-ui/core/Popover'
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import {formatNum, isNumeric} from './../../../globals';
+import {blackList, formatNum, isNumeric} from './../../../globals';
 import {LanguageContext} from './../../../App';
 
 const styles = theme => ({
@@ -26,38 +26,45 @@ class MapPopover extends Component {
         let content = [];
         const { classes } = this.props;
 
-        featureInfo && featureInfo.filter(feature => feature.LAYERTITLE !== "Municipalities").map((feature, index) => {
-            content.push(
-                <div key={`MapPopover_${index}`}>
-                    {index !== featureInfo.length - 1 && index !== 0 && !layers.includes(feature.LAYERTITLE) && <Divider></Divider>}
-                    {/*layers === [] || !layers.includes(feature.LAYERTITLE) && <Typography variant={'overline'} style={{ textTransform: 'uppercase' }}>{feature.LAYERTITLE}</Typography>*/}
-                    {this.props.timeField && this.props.time && index === 0 && <Typography variant={'overline'} style={{ textTransform: 'uppercase' }}>{this.props.timeField}: {this.props.time}</Typography>}
-                    {Object.keys(feature).map((key, keyIndex) => {
-                        if (key !== 'LAYERTITLE' && key !== this.props.timeField ) {
-                          const keyTemp = fieldAliases.find(feat => feat.field === key)
+        try {
+            featureInfo && featureInfo.filter(feature => feature.LAYERTITLE !== "Municipalities").map((feature, index) => {
+                content.push(
+                    <div key={`MapPopover_${index}`}>
+                        {index !== featureInfo.length - 1 && index !== 0 && !layers.includes(feature.LAYERTITLE) &&
+                        <Divider></Divider>}
+                        {/*layers === [] || !layers.includes(feature.LAYERTITLE) && <Typography variant={'overline'} style={{ textTransform: 'uppercase' }}>{feature.LAYERTITLE}</Typography>*/}
+                        {this.props.timeField && this.props.time && index === 0 && <Typography variant={'overline'}
+                                                                                               style={{textTransform: 'uppercase'}}>{this.props.timeField}: {this.props.time}</Typography>}
+                        {Object.keys(feature).map((key, keyIndex) => {
+                            if (key !== 'LAYERTITLE' && key !== this.props.timeField && !blackList.mapPopOver.includes(key)) {
+                                const keyTemp = fieldAliases.find(feat => feat.field === key)
 
-                            const keyText = keyTemp[lan] ? keyTemp[lan] : '';
-                          return <Typography
-                              classes={{root: classes.typography}}
-                              key={`MapPopover_feat_${keyIndex}`}
-                              variant={'caption'}><strong> {keyText}: </strong> {isNumeric(feature[key]) ? formatNum(feature[key]) : feature[key]}
-                          </Typography>
-                        }
-                    })}
-                    {/*field === 'all' ? Object.keys(feature).map((key, keyIndex) => {
-                      if (!blackList.stats.includes(key) && key !== 'landArea') {
-                        return <Typography
-                            classes={{root: classes.typography}}
-                            key={`MapPopover_feat_${key}`}
-                            variant={'caption'}><strong> {key}: </strong> {isNumeric(feature[key]) ? formatNum(feature[key]) : feature[key]}
-                        </Typography>
-                      }
-                    }) : <Typography classes={{root: classes.typography}} variant={'caption'}><strong>{field}:</strong> {isNumeric(feature[field]) ? formatNum(feature[field]) : feature[field]}</Typography>*/}
-                    {index !== featureInfo.length - 1 && <Divider light style={{ marginTop: 4, marginBottom: 4 }}></Divider>}
-                </div>
-            )
-            !layers.includes(feature.LAYERTITLE) && layers.push(feature.LAYERTITLE);
-        })
+                                const keyText = keyTemp[lan] ? keyTemp[lan] : '';
+                                return <Typography
+                                    classes={{root: classes.typography}}
+                                    key={`MapPopover_feat_${keyIndex}`}
+                                    variant={'caption'}><strong> {keyText}: </strong> {isNumeric(feature[key]) ? formatNum(feature[key]) : feature[key]}
+                                </Typography>
+                            }
+                        })}
+                        {/*field === 'all' ? Object.keys(feature).map((key, keyIndex) => {
+                          if (!blackList.stats.includes(key) && key !== 'landArea') {
+                            return <Typography
+                                classes={{root: classes.typography}}
+                                key={`MapPopover_feat_${key}`}
+                                variant={'caption'}><strong> {key}: </strong> {isNumeric(feature[key]) ? formatNum(feature[key]) : feature[key]}
+                            </Typography>
+                          }
+                        }) : <Typography classes={{root: classes.typography}} variant={'caption'}><strong>{field}:</strong> {isNumeric(feature[field]) ? formatNum(feature[field]) : feature[field]}</Typography>*/}
+                        {index !== featureInfo.length - 1 &&
+                        <Divider light style={{marginTop: 4, marginBottom: 4}}></Divider>}
+                    </div>
+                )
+                !layers.includes(feature.LAYERTITLE) && layers.push(feature.LAYERTITLE);
+            })
+        } catch (e) {
+            console.error("Failed to populate", e);
+        }
         return content;
     }
 

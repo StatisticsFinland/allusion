@@ -15,6 +15,7 @@ import BasemapControl from './BasemapControl';
 import StatisticsCatalog from './StatisticsCatalog';
 import MunicipalityCatalog from './MunicipalityCatalog';
 import flatten from 'lodash/flatten';
+import difference from 'lodash/difference';
 
 import {LanguageContext} from './../../App';
 import SavedAreaCatalog from "./SavedAreaCatalog";
@@ -98,27 +99,31 @@ class LayerDrawer extends Component {
   };
 
   toggleCustomAreaSelection = area => {
-    let selection = [...area.selection];
+    let activeSelection = flatten([...this.props.savedCustomAreas
+        .filter(area2 => area2.activated && area2.id !== area.id)
+        .map(area2 => area2.selection)]);
+    let areaSelection = [...area.selection];
     if (!area.activated) {
       let munisToDeselect = this.props.toggleCustomAreaActivation(area, true);
-      this.catRef.addRemoveCustomMunids(selection, munisToDeselect);
-      this.catRef.addRemoveFromSelection(selection, munisToDeselect);
+      this.catRef.addRemoveCustomMunids(areaSelection, munisToDeselect);
+      this.catRef.addRemoveFromSelection(areaSelection, munisToDeselect);
     } else {
       this.props.toggleCustomAreaActivation(area, false);
-      this.catRef.addRemoveCustomMunids([], selection);
-      this.catRef.addRemoveFromSelection([], selection);
+      this.catRef.addRemoveCustomMunids([], difference(areaSelection, activeSelection));
+      this.catRef.addRemoveFromSelection([], difference(areaSelection, activeSelection));
     }
   };
 
   toggleAllCustomAreas = (selectionState) => {
-    //TODO: Fix this
     let selection = flatten([...this.props.savedCustomAreas.map(area => area.selection)]);
     let munisToDeselect = flatten(this.props.savedCustomAreas
         .map(area => this.props.toggleCustomAreaActivation(area, selectionState)));
     if (selectionState) {
       this.catRef.addRemoveCustomMunids(selection, munisToDeselect);
+      this.catRef.addRemoveFromSelection(selection, munisToDeselect);
     } else {
       this.catRef.addRemoveCustomMunids([], selection);
+      this.catRef.addRemoveFromSelection([], selection);
     }
 
   };

@@ -40,7 +40,7 @@ class App extends Component {
     showInfo: false,
     showLayerButton: true,
     showInfoDrawer: false,
-    showSavedAreaSelectionDrawer: false,
+    showSavedAreaSelectionDrawer: true,
     logged: false,
     timeValues: null,
     time: null,
@@ -63,6 +63,7 @@ class App extends Component {
     statDataValues: [],
     statSettings: { year: 2019, scale: 4500000, seas: false },
     drawExtent: [20, 60, 33, 70],
+    allowIntersectingFeatures: false,
     labels: false
   };
 
@@ -293,6 +294,7 @@ class App extends Component {
                 switchTheme={this.switchTheme}
                 searchDialogVisibility={this.state.showSearch}
                 toggleSearch={() => { this.toggleDialog('Search') }}
+                allowIntersectingFeatures={this.state.allowIntersectingFeatures}
                 toggleLayerDrawer={this.toggleLayerDrawer}
                 layerDrawerVisibility={this.state.showLayerDrawer}
                 toggleInfoDrawer={this.toggleInfoDrawer}

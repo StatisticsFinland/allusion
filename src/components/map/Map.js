@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Hidden from '@material-ui/core/Hidden';
 import * as _ from 'lodash';
+import colormap from 'colormap';
 /* OpenLayers */
 import OLMap from 'ol/Map';
 import View from 'ol/View';
@@ -516,40 +517,16 @@ class Map extends Component {
       }
     }, () => {
 
-      let featuresBelongingToRegions = _.flatten([...new Set(
-          this.state.regionFeatureUnions
-              .filter(f => f.activated)
-              .map(union => {
-                let unionFeatures = features.filter(feature => union.selection.includes(feature.get('municipalityCode')));
-                let unionFeature = union.getUnionFromFeatures(unionFeatures, statisticalVariable);
-                unionFeature && source.addFeature(unionFeature);
-                return unionFeatures;
-              }))]);
+      let unionFeatures = this.composeUnionFeatures(features, statisticalVariable);
+      if (unionFeatures.length > 0) {
+        source.addFeatures(unionFeatures);
+      }
 
-      let featuresBelongingToMajorRegions = _.flatten([...new Set(
-          this.state.majorRegionFeatureUnions
-              .filter(f => f.activated)
-              .map(union => {
-                let unionFeatures = features.filter(feature => union.selection.includes(feature.get('municipalityCode')));
-                let unionFeature = union.getUnionFromFeatures(unionFeatures, statisticalVariable);
-                unionFeature && source.addFeature(unionFeature);
-                return unionFeatures;
-              }))]);
+      let unionFeatureCodes = [...new Set(_.flatten(unionFeatures.map(f => f.get('originalProperties').municipalityCode)))];
+      let remainingFeatures = features.filter(f => !unionFeatureCodes.includes(f.get('municipalityCode')));
 
 
-      let featuresBelongingToCustomAreas = _.flatten([...new Set(
-          this.state.savedCustomAreas
-              .filter(area => area.activated && !area.beingModified)
-              .map(area => {
-                // TODO: Modify if wanted to have municipality in multiple areas
-                let unionFeatures = features.filter(feature => _.includes(area.selection, feature.get('municipalityCode')));
-                let unionFeature = area.getUnionFromFeatures(unionFeatures, statisticalVariable);
-                unionFeature && source.addFeature(unionFeature);
-                return unionFeatures;
-              }))]);
 
-      let remainingFeatures = _.difference(features, featuresBelongingToCustomAreas,
-          featuresBelongingToMajorRegions, featuresBelongingToRegions);
       if (remainingFeatures.length > 0) {
         source.addFeatures(remainingFeatures);
       }
@@ -559,6 +536,52 @@ class Map extends Component {
       }
       this.prepareStyle(layer, [...source.getFeatures()], statisticalVariable);
     })
+  };
+
+  composeUnionFeatures = (features, statisticalVariable) => {
+    let unionFeatures = _.flatten(
+        [this.state.regionFeatureUnions,
+          this.state.majorRegionFeatureUnions,
+          this.state.savedCustomAreas])
+        .filter(area => area.activated && !area.beingModified)
+        .map(union => {
+          let unionFeatures = features.filter(feature => _.includes(union.selection, feature.get('municipalityCode')));
+          return union.getUnionFromFeatures(unionFeatures, statisticalVariable);
+        }).filter(f => f);
+
+    if (!this.props.allowIntersectingFeatures) {
+      return unionFeatures;
+    }
+
+    let intersectingFeatures = [];
+    unionFeatures.forEach(f1 => {
+      unionFeatures.forEach(f2 => {
+        if (!intersectingFeatures.includes(f2) && f1 !== f2) {
+          let op1 = f1.get('originalProperties');
+          let op2 = f2.get('originalProperties');
+          if (op1 && op2) {
+            let intersection = _.intersection(op1.municipalityCode,
+                op2.municipalityCode);
+            intersection.length > 0 && intersectingFeatures.push(f1, f2);
+          }
+        }
+      })
+    });
+
+    intersectingFeatures = [...new Set(intersectingFeatures)].sort((a, b) => b.get('landArea') - a.get('landArea'));
+    let normalFeatures = unionFeatures.filter(f => !intersectingFeatures.includes(f));
+
+    if (intersectingFeatures.length > 1) {
+      const ramp = colormap({
+        colormap: 'hsv',
+        format: 'rba',
+        nshades: Math.max(11, intersectingFeatures.length),
+        alpha: 0.3
+      });
+
+      intersectingFeatures.forEach((f, i) => f.set('fillColor', ramp[i], true));
+    }
+    return _.union(intersectingFeatures, normalFeatures);
   };
 
   handleSelectedFeatures = features => {
@@ -665,13 +688,15 @@ class Map extends Component {
     let munisToDeselect = [];
     if (state) {
       area.activate();
-      // Deactivate the custom areas with same municipalities
-      otherAreas.forEach(area2 => {
-        if (area2.activated && _.intersection(area.selection, area2.selection).length) {
-          area2.deactivate();
-          munisToDeselect = _.union(munisToDeselect, _.difference(area2.selection, area.selection));
-        }
-      });
+      if (!this.props.allowIntersectingFeatures) {
+        // Deactivate the custom areas with same municipalities
+        otherAreas.forEach(area2 => {
+          if (area2.activated && _.intersection(area.selection, area2.selection).length) {
+            area2.deactivate();
+            munisToDeselect = _.union(munisToDeselect, _.difference(area2.selection, area.selection));
+          }
+        });
+      }
     } else {
       area.deactivate();
     }

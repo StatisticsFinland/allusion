@@ -63,8 +63,7 @@ class FeatureUnion {
       properties[statField + "_km2"] = null;
     }
 
-    //TODO: Include the original properties
-    // properties.orig = allProperties;
+    properties.originalProperties = allProperties;
 
     return properties;
   };

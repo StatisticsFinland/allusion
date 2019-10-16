@@ -234,7 +234,7 @@ class InfoDrawer extends Component {
     const {classes, fieldAliases} = this.props;
     const {order, orderBy} = this.state;
 
-    let statHeaders = Object.keys(featureInfo[0]).filter(key => blackList.stats.includes(key) && ![this.props.timeField, 'LAYERTITLE', 'municipalityCode', 'regionCode', 'regionNUTS', 'areaCode', 'areaNUTS'].includes(key));
+    let statHeaders = Object.keys(featureInfo[0]).filter(key => blackList.stats.includes(key) && ![this.props.timeField, 'originalProperties', 'LAYERTITLE', 'municipalityCode', 'regionCode', 'regionNUTS', 'areaCode', 'areaNUTS'].includes(key));
 
     let statKeys = field === 'all' ? Object.keys(featureInfo[0]).filter(key => !blackList.stats.includes(key)) : [field];
 

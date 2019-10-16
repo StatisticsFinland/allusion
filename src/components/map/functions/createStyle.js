@@ -17,7 +17,7 @@ const createStyle = (style, time = null, selection = false, relativeToArea = nul
 
     /* Single symbology */
     if (style.styling === 'single') {
-        fill = style.fillVisibility ? new Fill({ color: style.fill }) : null;
+        fill = style.fillVisibility ? new Fill({color: feature.get('fillColor') ? feature.get('fillColor') : style.fill}) : null;
         stroke = style.strokeVisibility ? new Stroke({ color: style.stroke, width: style.strokeWidth }) : null
     } else if (style.styling === 'categorical') {
         let index = style.fieldValues.findIndex(value => value === feature.get(style.fieldSelection));
@@ -99,7 +99,7 @@ const createStyle = (style, time = null, selection = false, relativeToArea = nul
     if (!relativeToArea && !['Ei tilastoa', 'No statistics', 'Ei tilastoa_km2', 'No statistics_km2'].includes(style.fieldSelection)) {
         featureStyle = new Style({
             fill: new Fill({
-                color: 'rgba(255,255,255,0.85)'
+                color: feature.get('fillColor') ? feature.get('fillColor') : 'rgba(255,255,255,0.85)'
             }), stroke: new Stroke({
                 color: 'rgba(0,115,176,0.66)', width: 0.5
             })

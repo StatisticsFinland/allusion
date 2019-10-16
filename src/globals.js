@@ -73,11 +73,19 @@ const sortArrayOfObjects = key => (a, b) => {
 };
 
 const blackList = {
-  map: ['id', 'ID', 'FID', 'fid', 'bbox', 'geometry', 'geom', 'regionkode', 'dagi_id', 'komkode', 'LAYERTITLE', 'layer', 'DStkode', 'dstkode'],
-  stats: ['id', 'ID', 'FID', 'fid', 'bbox', 'geometry', 'geom', 'regionkode', 'dagi_id', 'komkode', 'LAYERTITLE', 'layer', 'DStkode', 'dstkode', 'dstnavn', 'kommune', 'zipcode', 'postinro', 'ponro', 'KODE', 'kode', 'year', 'region', 'so', 'ds', 'municipalityCode', 'regionCode', 'municipalityName', 'regionName', 'regionNUTS', 'areaName', 'areaCode', 'areaNUTS'],
-  chart: ['id', 'Id', 'ID', 'fid', 'FID', 'oid', 'OID', 'code', 'CODE', 'kode', 'KODE', 'postinro', 'ponro', 'zipcode', 'tunniste', 'bbox', 'Bbox', 'BBOX', 'bbox ', 'so', 'ds'],
+  map: ['id', 'ID', 'FID', 'fid', 'bbox', 'geometry', 'geom', 'regionkode', 'dagi_id', 'komkode', 'LAYERTITLE',
+    'layer', 'DStkode', 'dstkode', 'fillColor'],
+  mapPopOver: ['id', 'ID', 'FID', 'fid', 'bbox', 'geometry', 'geom', 'regionkode', 'dagi_id', 'komkode', 'LAYERTITLE',
+    'layer', 'DStkode', 'dstkode', 'originalProperties', 'fillColor'],
+  stats: ['id', 'ID', 'FID', 'fid', 'bbox', 'geometry', 'geom', 'regionkode', 'dagi_id', 'komkode', 'LAYERTITLE',
+    'layer', 'DStkode', 'dstkode', 'dstnavn', 'kommune', 'zipcode', 'postinro', 'ponro', 'KODE', 'kode', 'year',
+    'region', 'so', 'ds', 'municipalityCode', 'regionCode', 'municipalityName', 'regionName', 'regionNUTS', 'areaName',
+    'areaCode', 'areaNUTS', 'originalProperties', 'fillColor'],
+  chart: ['id', 'Id', 'ID', 'fid', 'FID', 'oid', 'OID', 'code', 'CODE', 'kode', 'KODE', 'postinro', 'ponro', 'zipcode',
+    'tunniste', 'bbox', 'Bbox', 'BBOX', 'bbox ', 'so', 'ds', 'originalProperties', 'fillColor'],
   styler: ['bbox', 'geometry', 'geom'],
-  quantitativeStyler: ['id', 'regionkode', 'dagi_id', 'ID', 'FID', 'fid', 'DStkode', 'dstkode', 'komkode', 'kommune']
+  quantitativeStyler: ['id', 'regionkode', 'dagi_id', 'ID', 'FID', 'fid', 'DStkode', 'dstkode', 'komkode', 'kommune',
+    'originalProperties', 'fillColor']
 };
 
 const defaults = {
