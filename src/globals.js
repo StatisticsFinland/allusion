@@ -80,7 +80,7 @@ const blackList = {
   stats: ['id', 'ID', 'FID', 'fid', 'bbox', 'geometry', 'geom', 'regionkode', 'dagi_id', 'komkode', 'LAYERTITLE',
     'layer', 'DStkode', 'dstkode', 'dstnavn', 'kommune', 'zipcode', 'postinro', 'ponro', 'KODE', 'kode', 'year',
     'region', 'so', 'ds', 'municipalityCode', 'regionCode', 'municipalityName', 'regionName', 'regionNUTS', 'areaName',
-    'areaCode', 'areaNUTS', 'originalProperties', 'fillColor'],
+    'areaCode', 'areaNUTS', 'originalProperties', 'fillColor', 'customAreaName'],
   chart: ['id', 'Id', 'ID', 'fid', 'FID', 'oid', 'OID', 'code', 'CODE', 'kode', 'KODE', 'postinro', 'ponro', 'zipcode',
     'tunniste', 'bbox', 'Bbox', 'BBOX', 'bbox ', 'so', 'ds', 'originalProperties', 'fillColor'],
   styler: ['bbox', 'geometry', 'geom'],

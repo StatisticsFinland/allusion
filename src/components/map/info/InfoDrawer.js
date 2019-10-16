@@ -50,7 +50,7 @@ const styles = theme => ({
   },
   statisticTable: {
     marginLeft: theme.spacing.unit,
-    minWidth: 400,
+    minWidth: 450,
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -209,15 +209,15 @@ class InfoDrawer extends Component {
                       <TableCell classes={{root: classes.tableCellHead}} padding='none' component="th"
                                  scope="row">{stat.field}</TableCell>
                       {statistics.includes('sum') && <TableCell classes={{root: classes.tableCell}}
-                                                                align="right">{!stat.field.includes(' km2') ? isNumeric(stat.sum) ? separateThousands(formatNum(stat.sum, 0)) : '' : ''}</TableCell>}
+                                                                align="right">{!stat.field.includes(' km2') ? isNumeric(stat.sum) ? separateThousands(formatNum(stat.sum, 2)) : '' : ''}</TableCell>}
                       {statistics.includes('min') && <TableCell classes={{root: classes.tableCell}}
-                                                                align="right">{isNumeric(stat.min) ? separateThousands(formatNum(stat.min, 0)) : ''}</TableCell>}
+                                                                align="right">{isNumeric(stat.min) ? separateThousands(formatNum(stat.min, 2)) : ''}</TableCell>}
                       {statistics.includes('max') && <TableCell classes={{root: classes.tableCell}}
-                                                                align="right">{isNumeric(stat.max) ? separateThousands(formatNum(stat.max, 0)) : ''}</TableCell>}
+                                                                align="right">{isNumeric(stat.max) ? separateThousands(formatNum(stat.max, 2)) : ''}</TableCell>}
                       {statistics.includes('mean') && <TableCell classes={{root: classes.tableCell}}
-                                                                 align="right">{isNumeric(stat.mean) ? separateThousands(formatNum(stat.mean, 0)) : ''}</TableCell>}
+                                                                 align="right">{isNumeric(stat.mean) ? separateThousands(formatNum(stat.mean, 2)) : ''}</TableCell>}
                       {statistics.includes('median') && <TableCell classes={{root: classes.tableCell}}
-                                                                   align="right">{isNumeric(stat.median) ? separateThousands(formatNum(stat.median, 0)) : ''}</TableCell>}
+                                                                   align="right">{isNumeric(stat.median) ? separateThousands(formatNum(stat.median, 2)) : ''}</TableCell>}
                     </TableRow>
                 )
               })}
@@ -234,7 +234,7 @@ class InfoDrawer extends Component {
     const {classes, fieldAliases} = this.props;
     const {order, orderBy} = this.state;
 
-    let statHeaders = Object.keys(featureInfo[0]).filter(key => blackList.stats.includes(key) && ![this.props.timeField, 'originalProperties', 'LAYERTITLE', 'municipalityCode', 'regionCode', 'regionNUTS', 'areaCode', 'areaNUTS'].includes(key));
+    let statHeaders = Object.keys(featureInfo[0]).filter(key => blackList.stats.includes(key) && ![this.props.timeField, 'customAreaName', 'originalProperties', 'LAYERTITLE', 'municipalityCode', 'regionCode', 'regionNUTS', 'areaCode', 'areaNUTS'].includes(key));
 
     let statKeys = field === 'all' ? Object.keys(featureInfo[0]).filter(key => !blackList.stats.includes(key)) : [field];
 
@@ -242,9 +242,7 @@ class InfoDrawer extends Component {
       return (
           <TableRow hover key={index}>
             <TableCell classes={{root: classes.tableCellHead2}} padding='none' component="th"
-                       scope="row">{statHeaders.map((header, i) => {
-              return <span key={header}>{n[header]}{i !== statHeaders.length - 1 && ', '}</span>
-            })}</TableCell>
+                       scope="row">{this.populateFeatureTableCellHeader(statHeaders, n)}</TableCell>
             {statKeys.map((key, keyIndex) =>
                 <TableCell classes={{root: classes.tableCell}} align="right" key={`InfoDrawer_feat_${keyIndex}`}>
                   {isNumeric(n[key]) ? separateThousands(parseFloat(formatNum(n[key]))) : n[key]}
@@ -273,6 +271,18 @@ class InfoDrawer extends Component {
           </Table>
         </Paper>
     )
+  };
+
+  populateFeatureTableCellHeader = (statHeaders, fInfo) => {
+    let customAreaName = fInfo['customAreaName'];
+    if (customAreaName) {
+      return <span key={'customAreaName'}>{customAreaName}</span>
+    } else {
+      return statHeaders.map((header, i) => {
+        return <span key={header}>{fInfo[header]}{i !== statHeaders.length - 1 && ', '}</span>
+      });
+
+    }
   };
 
   populate = (featureInfo, txt) => {
