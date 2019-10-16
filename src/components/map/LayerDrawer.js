@@ -254,6 +254,7 @@ class LayerDrawer extends Component {
                             handleCustomAreaDelete={this.props.handleCustomAreaDelete}
                             activateSelection={this.activateSelection}
                             toggleCustomAreaSelection={this.toggleCustomAreaSelection}
+                            addCustomAreasFromExistingUnions={this.props.addCustomAreasFromExistingUnions}
                             areaName={this.state.areaName}
                             customAreaName={this.state.customAreaName}
                             changeName={this.changeName}

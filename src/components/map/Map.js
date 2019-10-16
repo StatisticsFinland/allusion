@@ -526,7 +526,6 @@ class Map extends Component {
       let remainingFeatures = features.filter(f => !unionFeatureCodes.includes(f.get('municipalityCode')));
 
 
-
       if (remainingFeatures.length > 0) {
         source.addFeatures(remainingFeatures);
       }
@@ -705,6 +704,19 @@ class Map extends Component {
     return munisToDeselect;
   };
 
+  addCustomAreasFromExistingUnions = (type) => {
+    let existingUnions;
+    if (type === 'regions') {
+      existingUnions = this.state.regionFeatureUnions;
+    } else if (type === 'majorRegions') {
+      existingUnions = this.state.majorRegionFeatureUnions;
+    } else {
+      return false;
+    }
+    let areasToSave = existingUnions.map(union => union.asObject());
+    areasToSave.length && this.saveMultipleCustomAreas(areasToSave);
+  };
+
   addCustomAreasFromQuery = qs => {
     if (qs) {
       try {
@@ -712,8 +724,10 @@ class Map extends Component {
         let i = 0;
         let areas = [];
         for (i = 0; i < parsedAreas.name.length; i++) {
-          let sel = parsedAreas.selection[i].split(",");
-          areas.push({name: parsedAreas.name[i], selection: sel[0] !== "" ? sel : []});
+          if (parsedAreas.selection[i]) {
+            let sel = parsedAreas.selection[i].split(",");
+            areas.push({name: parsedAreas.name[i], selection: sel[0] !== "" ? sel : []});
+          }
         }
 
 
@@ -841,6 +855,7 @@ class Map extends Component {
               modifyCustomArea={this.modifyCustomArea}
               saveCustomAreaModification={this.saveCustomAreaModification}
               toggleCustomAreaActivation={this.toggleCustomAreaActivation}
+              addCustomAreasFromExistingUnions={this.addCustomAreasFromExistingUnions}
               savedAreas={this.state.savedAreas}
               savedCustomAreas={this.state.savedCustomAreas}
               selection={this.state.selection}

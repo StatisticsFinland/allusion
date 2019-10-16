@@ -205,10 +205,12 @@ class SavedAreaCatalog extends Component {
                 </Button>
               </Tooltip>
             </div>
-            {/*<div key={`div_custom_area_buttons_bring`} style={{display: 'flex'}}>
-              <Button size='small'  color='primary'>{txt.savedAreasDrawer.bringMajorRegions}</Button>
-              <Button size='small'  color='primary'>{txt.savedAreasDrawer.bringRegions}</Button>
-            </div>*/}
+            <div key={`div_custom_area_buttons_bring`} style={{display: 'flex'}}>
+              <Button size='small' color='primary'
+                      onClick={() => this.props.addCustomAreasFromExistingUnions("majorRegions")}>{txt.savedAreasDrawer.bringMajorRegions}</Button>
+              <Button size='small' color='primary'
+                      onClick={() => this.props.addCustomAreasFromExistingUnions("regions")}>{txt.savedAreasDrawer.bringRegions}</Button>
+            </div>
 
             <Divider/>
           </FormControl>

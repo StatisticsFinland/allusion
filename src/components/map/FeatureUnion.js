@@ -29,6 +29,10 @@ class FeatureUnion {
     }
   }
 
+  asObject() {
+    return {name: this.name, selection: this.selection};
+  }
+
   /* Function to calculate aggregated  of the features */
   calculateAggregatedProperties(features, statisticalField) {
     let statField = statisticalField.replace("_km2", "");
@@ -74,6 +78,7 @@ class FeatureUnion {
     if (features.length < 2) {
       if (features.length === 1) {
         features[0].set('customAreaName', this.name);
+        features[0].set('originalProperties', features[0].getProperties());
       }
       return features[0];
     }
