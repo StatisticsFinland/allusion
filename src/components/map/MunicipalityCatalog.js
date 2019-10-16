@@ -107,7 +107,11 @@ class MunicipalityCatalog extends Component {
 
   addRemoveCustomMunids = (munsToAdd, munsToRemove = []) => {
     let customMunids = _.difference(_.union(this.state.customMunids, munsToAdd), munsToRemove);
-    this.setState({customMunids});
+    const features = this.props.features;
+    let customMunFeatures = features.filter(feature => customMunids.includes(feature.firstCode));
+    let regids = _.difference(this.state.regids, [...new Set(customMunFeatures.map(f => f.secondCode))]);
+    let majorRegids = _.difference(this.state.majorRegids, [...new Set(customMunFeatures.map(f => f.thirdCode))]);
+    this.setState({customMunids, regids, majorRegids});
   };
 
   addRemoveMunid = (features, munid) => {
