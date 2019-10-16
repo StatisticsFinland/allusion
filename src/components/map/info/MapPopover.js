@@ -8,7 +8,9 @@ import {LanguageContext} from './../../../App';
 
 const styles = theme => ({
     popover: {
-        pointerEvents: 'none'
+      pointerEvents: 'none',
+      maxWidth: '80vw',
+      overflowY: 'none'
     },
     paper: {
         padding: theme.spacing.unit,
@@ -35,7 +37,8 @@ class MapPopover extends Component {
                         {/*layers === [] || !layers.includes(feature.LAYERTITLE) && <Typography variant={'overline'} style={{ textTransform: 'uppercase' }}>{feature.LAYERTITLE}</Typography>*/}
                         {this.props.timeField && this.props.time && index === 0 && <Typography variant={'overline'}
                                                                                                style={{textTransform: 'uppercase'}}>{this.props.timeField}: {this.props.time}</Typography>}
-                        {Object.keys(feature).map((key, keyIndex) => {
+                      {this.getKeys(feature)
+                          .map((key, keyIndex) => {
                             if (key !== 'LAYERTITLE' && key !== this.props.timeField && !blackList.mapPopOver.includes(key)) {
                                 const keyTemp = fieldAliases.find(feat => feat.field === key)
 
@@ -67,6 +70,16 @@ class MapPopover extends Component {
         }
         return content;
     }
+
+  getKeys(feature) {
+    let keys = Object.keys(feature);
+    let index = keys.indexOf('customAreaName');
+    if (index !== -1) {
+      keys.splice(index, 1);
+      keys = ['customAreaName', ...keys];
+    }
+    return keys;
+  }
 
     render() {
 
