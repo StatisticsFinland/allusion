@@ -58,12 +58,12 @@ class SavedAreaCatalog extends Component {
     let selections = [];
     this.props.savedCustomAreas.forEach(area => {
       names.push(area.name);
-      selections.push(area.selection);
+      selections.push(area.selection.toString().replace(/,/g, '-'));
     });
 
     const areas = queryString.stringify({
-      name: names,
-      selection: selections
+      n: names,
+      s: selections
     }, {arrayFormat: 'bracket'});
     window.prompt(this.props.txt.shareDialog.copy, `${window.location.href.split('?')[0]}?${areas}`);
   };

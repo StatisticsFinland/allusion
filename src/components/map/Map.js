@@ -725,13 +725,12 @@ class Map extends Component {
         const parsedAreas = queryString.parse(qs, {arrayFormat: 'bracket'});
         let i = 0;
         let areas = [];
-        for (i = 0; i < parsedAreas.name.length; i++) {
-          if (parsedAreas.selection[i]) {
-            let sel = parsedAreas.selection[i].split(",");
-            areas.push({name: parsedAreas.name[i], selection: sel[0] !== "" ? sel : []});
+        for (i = 0; i < parsedAreas.n.length; i++) {
+          if (parsedAreas.s[i]) {
+            let sel = parsedAreas.s[i].split("-");
+            areas.push({name: parsedAreas.n[i], selection: sel[0] !== "" ? sel : []});
           }
         }
-
 
         areas.length && this.saveMultipleCustomAreas(areas);
       } catch (e) {
