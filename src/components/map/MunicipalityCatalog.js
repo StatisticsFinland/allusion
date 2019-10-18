@@ -17,21 +17,23 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.paper,
   },
   first: {
-    marginLeft: theme.spacing.unit * 2,
+    marginLeft: -theme.spacing.unit * 0.75,
     paddingTop: 0,
     paddingBottom: 0
   },
   firstAll: {
-    marginLeft: theme.spacing.unit * 1,
+    marginLeft: -theme.spacing.unit * 0.75,
     paddingTop: 0,
     paddingBottom: 0
   },
   parent: {
+    marginLeft: -theme.spacing.unit * 0.75,
     paddingTop: theme.spacing.unit / 2,
     paddingBottom: theme.spacing.unit / 2,
     width: 185
   },
   grandParent: {
+    marginLeft: -theme.spacing.unit * 0.75,
     paddingTop: theme.spacing.unit / 2,
     paddingBottom: theme.spacing.unit / 2,
     width: 188
@@ -51,6 +53,16 @@ const styles = theme => ({
     fontSize: 15,
     color: theme.palette.primary.main
   },
+  listItemTextNotActiveGrandParent: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: 'black'
+  },
+  listItemTextActiveGrandParent: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: theme.palette.primary.main
+  },
   chip: {
     width: 170,
     justifyContent: 'space-between'
@@ -64,6 +76,7 @@ class MunicipalityCatalog extends Component {
     subOpen: 0,
     topOpen: 0,
     activeRegions: [],
+    activeMajorRegions: [],
     munids: [],
     regids: [],
     majorRegids: [],
@@ -81,7 +94,8 @@ class MunicipalityCatalog extends Component {
       regids: [],
       majorRegids: [],
       customMunids: [],
-      activeRegions: []
+      activeRegions: [],
+      activeMajorRegions: []
     }, () => this.props.emptyMap());
   };
 
@@ -95,7 +109,8 @@ class MunicipalityCatalog extends Component {
     const features = this.props.features;
     let munFeatures = features.filter(feature => munids.includes(feature.firstCode));
     let activeRegions = [...new Set(munFeatures.map(feat => feat.secondCode))];
-    this.setState({munids, activeRegions});
+    let activeMajorRegions = [...new Set(munFeatures.map(feat => feat.thirdCode))];
+    this.setState({munids, activeRegions, activeMajorRegions});
   };
 
   addRemoveFromSelection = (munsToAdd, munsToRemove = []) => {
@@ -237,7 +252,7 @@ class MunicipalityCatalog extends Component {
             <div key={`div_all`} style={{display: 'flex'}}>
               <Checkbox key={`checkbox_all`}
                         color='primary'
-                        style={{paddingLeft: 3, paddingTop: 4, paddingBottom: 4}}
+                        style={{paddingLeft: 12, paddingTop: 4, paddingBottom: 8}}
                         disabled={this.isAllChildrenDisabled(childIds, groupId, grandGroupId)}
                         checked={
                           !this.state.regids.includes(groupId) &&
@@ -259,7 +274,8 @@ class MunicipalityCatalog extends Component {
         groupFeatures.forEach((item, index) => {
           children.push(
               <div key={`div_${index}`} style={{display: 'flex'}}>
-                <Checkbox key={`checkbox_${index}`} color='primary' style={{paddingTop: 4, paddingBottom: 4}}
+                <Checkbox key={`checkbox_${index}`} color='primary'
+                          style={{paddingLeft: 24, paddingTop: 4, paddingBottom: 4}}
                           checked={this.state.munids.includes(item.firstCode)}
                           disabled={this.isChildDisabled(item.firstCode, groupId, grandGroupId)}
                           onChange={() => this.addRemoveMunid(features, item.firstCode)}/>
@@ -282,9 +298,10 @@ class MunicipalityCatalog extends Component {
         parents.push(
             <div key={group}>
               {parentIndex === 0 &&
-              <Typography variant='body2' style={{color: '#666', fontSize: 12}}>{txt.igalod.parent}</Typography>}
+              <Typography variant='body2'
+                          style={{paddingLeft: 8, color: '#666', fontSize: 12}}>{txt.igalod.parent}</Typography>}
               <div style={{display: 'flex'}}>
-                <Checkbox color='primary' style={{paddingLeft: 0, paddingTop: 8, paddingBottom: 8}}
+                <Checkbox color='primary' style={{paddingLeft: 8, paddingTop: 8, paddingBottom: 8}}
                           checked={this.state.regids.includes(groupId)}
                           disabled={this.isParentDisabled(childIds, grandGroupId)}
                           onChange={() => this.addRemoveRegid(features, group)}/>
@@ -333,6 +350,10 @@ class MunicipalityCatalog extends Component {
                   aria-label={'group'}
                   onClick={() => this.handleClickTopMenu(grandGroup)}>
                 <ListItemText primary={this.state.nuts ? `${grandGroup} (${grandGroupNUTS})` : grandGroup}
+                              classes={{
+                                primary: this.state.activeMajorRegions.includes(features.find(feat => feat.thirdCode === grandGroupId).thirdCode)
+                                    ? classes.listItemTextActiveGrandParent : classes.listItemTextNotActiveGrandParent
+                              }}
                 />
                 {this.state.topOpen === grandGroup ? <ExpandLess className={classes.subItem}/> :
                     <ExpandMore className={classes.subItem}/>}
@@ -360,6 +381,44 @@ class MunicipalityCatalog extends Component {
                   color="secondary"
                   variant="outlined"
               />}
+              {this.selectAll(txt.igalod.selectAllMajorRegions,
+                  _.uniq(features.map(f => f.thirdCode)).every(id => this.state.majorRegids.includes(id)),
+                  () => {
+                    let munids = features.map(f => f.firstCode);
+                    let majorRegids = _.uniq(features.map(f => f.thirdCode));
+                    if (_.difference(munids, this.state.munids).length === 0) {
+                      munids = [];
+                      majorRegids = [];
+                    }
+
+                    this.setState({munids, regids: [], majorRegids},
+                        () => this.props.changeMuns(munids, [], majorRegids));
+
+                  })}
+              {this.selectAll(txt.igalod.selectAllRegions,
+                  _.uniq(features.map(f => f.secondCode)).every(id => this.state.regids.includes(id)),
+                  () => {
+                    let munids = features.map(f => f.firstCode);
+                    let regids = _.uniq(features.map(f => f.secondCode));
+                    if (_.difference(munids, this.state.munids).length === 0) {
+                      munids = [];
+                      regids = [];
+                    }
+                    this.setState({munids, regids, majorRegids: []},
+                        () => this.props.changeMuns(munids, regids, []));
+                  })}
+              {this.selectAll(txt.igalod.selectAllMunis,
+                  features.every(f => this.state.munids.includes(f.firstCode)),
+                  () => {
+                    let munids = features.map(f => f.firstCode);
+                    if (_.difference(munids, this.state.munids).length === 0) {
+                      munids = [];
+                    }
+                    this.activateSelection(munids);
+                    this.setState({munids, regids: [], majorRegids: []},
+                        () => this.props.changeMuns(munids, [], []));
+                  })}
+
               <List component="nav">{grandParents}
               </List>
             </Collapse>
@@ -368,6 +427,29 @@ class MunicipalityCatalog extends Component {
           </div>
         </div>);
   };
+
+  selectAll(text, checked, onClick) {
+    return <div style={{display: 'flex'}}>
+      <Checkbox key={`checkbox_select_all_major_regions`}
+                color='primary'
+                style={{paddingLeft: 0, marginLeft: -2, paddingTop: 2, paddingBottom: 2}}
+                checked={checked}
+                disabled={this.state.customMunids.length > 0}
+                onChange={() => onClick()}/>
+      <ListItem
+          button
+          disableGutters={true}
+          aria-haspopup="true"
+          dense
+          aria-controls="indicatorSelector"
+          aria-label={'group'}
+          onClick={() => this.state.customMunids.length < 1 && onClick()}>
+        <ListItemText
+            primary={text}
+        />
+      </ListItem>
+    </div>;
+  }
 
   render() {
 

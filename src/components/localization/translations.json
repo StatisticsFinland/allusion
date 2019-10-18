@@ -107,6 +107,14 @@
     "selectAllMunis": [
       "Select all municipalities",
       "Valitse kaikki kunnat"
+    ],
+    "selectAllRegions": [
+      "Select all regions",
+      "Valitse kaikki maakunnat"
+    ],
+    "selectAllMajorRegions": [
+      "Select all major regions",
+      "Valitse kaikki suuralueet"
     ]
   },
   "button": {
@@ -139,7 +147,7 @@
       "Päivitä / korvaa"
     ],
     "saveNew": [
-      "Save as new",
+      "Save",
       "Tallenna uutena"
     ],
     "legend": [
@@ -349,7 +357,7 @@
       "Nimeä aluevalinta"
     ],
     "newUnion": [
-      "Name for custom feature union",
+      "Name for feature union",
       "Nimeä uusi unioni"
     ],
     "bringRegions": [

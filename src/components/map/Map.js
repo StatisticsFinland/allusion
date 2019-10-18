@@ -510,31 +510,33 @@ class Map extends Component {
     let source = layer.getSource();
     source.clear();
 
-    this.setState({
-      selectedLayer: {
-        url: source.getUrl(),
-        title: layer.getProperties().title
-      }
-    }, () => {
+    if (this.state.selection.length) {
+      this.setState({
+        selectedLayer: {
+          url: source.getUrl(),
+          title: layer.getProperties().title
+        }
+      }, () => {
 
-      let unionFeatures = this.composeUnionFeatures(features, statisticalVariable);
-      if (unionFeatures.length > 0) {
-        source.addFeatures(unionFeatures);
-      }
+        let unionFeatures = this.composeUnionFeatures(features, statisticalVariable);
+        if (unionFeatures.length > 0) {
+          source.addFeatures(unionFeatures);
+        }
 
-      let unionFeatureCodes = [...new Set(_.flatten(unionFeatures.map(f => f.get('originalProperties').municipalityCode)))];
-      let remainingFeatures = features.filter(f => !unionFeatureCodes.includes(f.get('municipalityCode')));
+        let unionFeatureCodes = [...new Set(_.flatten(unionFeatures.map(f => f.get('originalProperties').municipalityCode)))];
+        let remainingFeatures = features.filter(f => !unionFeatureCodes.includes(f.get('municipalityCode')));
 
 
-      if (remainingFeatures.length > 0) {
-        source.addFeatures(remainingFeatures);
-      }
+        if (remainingFeatures.length > 0) {
+          source.addFeatures(remainingFeatures);
+        }
 
-      if (selectedFeatures) {
-        this.handleSelectedFeatures(features);
-      }
-      this.prepareStyle(layer, [...source.getFeatures()], statisticalVariable);
-    })
+        if (selectedFeatures) {
+          this.handleSelectedFeatures(features);
+        }
+        this.prepareStyle(layer, [...source.getFeatures()], statisticalVariable);
+      })
+    }
   };
 
   composeUnionFeatures = (features, statisticalVariable) => {
@@ -775,7 +777,8 @@ class Map extends Component {
     return (
         <div>
           <div ref={node => this.mapDiv = node} style={{height: '100vh', overflowY: 'hidden', overflowX: 'hidden'}}/>
-          {this.state.loading && <Spinner/>}
+          {this.props.loading && !this.state.selectedLayer &&
+          <Spinner layerDrawerVisibility={this.props.layerDrawerVisibility}/>}
           {this.state.selectedLayer && <Legend
               statisticYear={this.props.statisticYear}
               layerDrawerVisibility={this.props.layerDrawerVisibility}
