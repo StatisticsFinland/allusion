@@ -118,7 +118,8 @@ const defaults = {
       timeField: null,
       timeValues: null
     }
-  }
+  },
+  featureUnionPrefix: "oma_"
 };
 
 const timeList = ['year', 'YEAR', 'Year', 'Date', 'date', 'DATE'];

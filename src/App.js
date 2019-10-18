@@ -40,7 +40,7 @@ class App extends Component {
     showInfo: false,
     showLayerButton: true,
     showInfoDrawer: false,
-    showSavedAreaSelectionDrawer: true,
+    showSavedAreaSelectionDrawer: false,
     logged: false,
     timeValues: null,
     time: null,

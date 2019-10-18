@@ -33,10 +33,12 @@ const styles = theme => ({
     justifyContent: 'space-between'
   },
   first: {
-    marginLeft: theme.spacing.unit * 0.5,
+    marginLeft: theme.spacing.unit * 0.1,
+    overflowWrap: 'break-word',
+    maxWidth: 190,
     paddingTop: 0,
     paddingBottom: 0
-  },
+  }
 });
 
 class SavedAreaCatalog extends Component {
@@ -104,7 +106,9 @@ class SavedAreaCatalog extends Component {
       </>
     } else {
       return <>
-        <ListItemText key={`listitemtext_${area.id}`} primary={area.name}/>
+        <ListItemText key={`listitemtext_${area.id}`}
+                      primary={area.name}
+        />
         <Chip
             clickable
             key={`chip_${area.id}`}
@@ -130,12 +134,12 @@ class SavedAreaCatalog extends Component {
           <FormControl classes={{root: classes.inputPadding}}>
             <div style={{display: 'flex', flexDirection: 'column'}}>
 
-              <FormLabel>{txt.savedAreasDrawer.customUnions}</FormLabel>
+              {savedAreaSelectionVisibility && <FormLabel>{txt.savedAreasDrawer.customUnions}</FormLabel>}
               {savedCustomAreas.length > 1 &&
               <div key={`div_all_custom_areas`} style={{display: 'flex'}}>
                 <Checkbox key={`checkbox_all_custom_areas`}
                           color='primary'
-                          style={{paddingTop: 4, paddingBottom: 4}}
+                          style={{paddingTop: 4, paddingBottom: 4, marginLeft: -10, marginRight: -10}}
                           checked={savedCustomAreas.every(area => area.activated)}
                           disabled={savedCustomAreas.some(area => area.beingModified)}
                           onChange={() => this.props.toggleAllCustomAreas(savedCustomAreas.some(area => !area.activated))}>
@@ -147,7 +151,9 @@ class SavedAreaCatalog extends Component {
                     button
                     disableGutters={true}
                 >
-                  <ListItemText key={`listitemtext_all_custom_areas`} primary={txt.igalod.showAll}/>
+                  <ListItemText key={`listitemtext_all_custom_areas`}
+                                primary={txt.igalod.showAll}
+                  />
                 </ListItem>
               </div>
               }
@@ -155,7 +161,7 @@ class SavedAreaCatalog extends Component {
                 return <div key={`div_${area.id}`} style={{display: 'flex'}}>
                   <Checkbox key={`checkbox_${area.id}`}
                             color='primary'
-                            style={{paddingTop: 4, paddingBottom: 4}}
+                            style={{paddingTop: 4, paddingBottom: 4, marginLeft: -10, marginRight: -10}}
                             checked={area.activated}
                             disabled={savedCustomAreas.some(area => area.beingModified)}
                             onChange={() => this.props.toggleCustomAreaSelection(area)}>

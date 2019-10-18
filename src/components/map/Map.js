@@ -8,7 +8,7 @@ import View from 'ol/View';
 import {transform} from 'ol/proj.js';
 import {defaults as defaultInteractions} from 'ol/interaction.js';
 
-import {blackList, fieldAliases, isEmpty, makeCopy, srs} from '../../globals';
+import {blackList, defaults, fieldAliases, isEmpty, makeCopy, srs} from '../../globals';
 import {EPSG3067} from './projection/projections';
 import Basemaps from './basemaps/Basemaps';
 import Layers from './layers/Layers';
@@ -715,7 +715,7 @@ class Map extends Component {
     } else {
       return false;
     }
-    let areasToSave = existingUnions.map(union => union.asObject());
+    let areasToSave = existingUnions.map(union => union.asObject(defaults.featureUnionPrefix));
     areasToSave.length && this.saveMultipleCustomAreas(areasToSave);
   };
 

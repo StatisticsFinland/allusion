@@ -29,8 +29,8 @@ class FeatureUnion {
     }
   }
 
-  asObject() {
-    return {name: this.name, selection: this.selection};
+  asObject(namePrefix = "") {
+    return {name: namePrefix + this.name, selection: this.selection};
   }
 
   /* Function to calculate aggregated  of the features */
