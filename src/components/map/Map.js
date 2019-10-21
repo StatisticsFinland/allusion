@@ -465,9 +465,6 @@ class Map extends Component {
       const layer = this.getLayerByName('Municipalities');
       let source = layer.getSource();
       if (source.getFeatures().length < regMuns.length) {
-        source.clear();
-        source.addFeatures(regMuns);
-
         let regionFeatureUnions = [];
         let majorRegionFeatureUnions = [];
 
@@ -485,8 +482,9 @@ class Map extends Component {
         });
 
         this.setState({regionFeatureUnions, majorRegionFeatureUnions});
-
       }
+      source.clear();
+      source.addFeatures(regMuns);
     }
     return ret;
   };

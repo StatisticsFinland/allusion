@@ -1,5 +1,5 @@
 const QueryGenerator = {
-  regionMunQuery(lan, year) {
+  regionMunQuery(lan, year, scale) {
     return `PREFIX xkos: <http://rdf-vocabulary.ddialliance.org/xkos#>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX class: <http://data.stat.fi/classifications/v1/classifications#>
@@ -24,7 +24,7 @@ const QueryGenerator = {
         FILTER(lang(?areaName) = '${lan}') .
       }`;
   },
-  regionMunGeomQuery(year) {
+  regionMunGeomQuery(year, scale, seas) {
     return `PREFIX mmlau: <http://paikkatiedot.fi/def/au/ont#>
     PREFIX ogc:   <http://www.opengis.net/ont/geosparql#>
     PREFIX so: <http://paikkatiedot.fi/so/igalod/kunnat2018/>
@@ -36,8 +36,8 @@ const QueryGenerator = {
           ?so ogc:hasGeometry ?geom .
           ?so dcterms:created ?created .
           ?so au:AdministrativeUnit.nationalCode ?code .
-          ?geom mmlau:scale 4500000 .
-          ?geom mmlau:hasSeaAreas false .
+          ?geom mmlau:scale ${scale} .
+          ?geom mmlau:hasSeaAreas ${seas} .
           ?geom ogc:asWKT ?wkt .
       FILTER(YEAR(?created)=${year}) .
         }`;

@@ -78,7 +78,7 @@ class App extends Component {
   /* Perform operations needed when language is changed */
   languageChangeOperations = (language) => {
     this.handleLanguageChange(language);
-    this.handleGetAreas(language);
+    this.handleGetAreas(language, this.state.statSettings.year, this.state.statSettings.scale, this.state.statSettings.seas);
     this.handleGetStatistics(language);
   };
 
@@ -112,6 +112,7 @@ class App extends Component {
   handleOwnSelections = (stats) => {
     this.setState({ statSettings: stats }, () => {
       this.getSparQL();
+      this.handleGetAreas(this.state.language, stats.year, stats.scale, this.state.statSettings.seas);
     });
   };
 
@@ -252,12 +253,12 @@ class App extends Component {
     this.languageChangeOperations(defaultLanguage);
   };
 
-  handleGetAreas = async (language) => {
+  handleGetAreas = async (language, year, scale, seas) => {
 
     try { /* Fetch regions and municipalities from MML endpoint for LayerDrawer */
       let promises = [
-        RegionController.getRegionsAndMunicipalities(QueryGenerator.regionMunQuery(language, '2019')),
-        RegionController.getGeometriesForMunicipalities(QueryGenerator.regionMunGeomQuery('2019'))
+        RegionController.getRegionsAndMunicipalities(QueryGenerator.regionMunQuery(language, year)),
+        RegionController.getGeometriesForMunicipalities(QueryGenerator.regionMunGeomQuery(year, scale, seas))
       ];
 
       const jsons = await Promise.all(
