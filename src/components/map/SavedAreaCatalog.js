@@ -135,7 +135,22 @@ class SavedAreaCatalog extends Component {
             <div style={{display: 'flex', flexDirection: 'column'}}>
 
               {savedAreaSelectionVisibility && <FormLabel>{txt.savedAreasDrawer.customUnions}</FormLabel>}
-              {savedCustomAreas.length > 1 &&
+              {savedCustomAreas.length > 0 &&
+              <div key={`div_delete_all_custom_areas`} style={{display: 'flex'}}>
+                <Chip
+                    clickable
+                    key={`chip_delete_all`}
+                    color="secondary"
+                    size="small"
+                    label={txt.igalod.deleteAll}
+                    variant="outlined"
+                    onClick={() => window.confirm(txt.savedAreasDrawer.deleteAllConfirmation) &&
+                        this.props.handleDeleteAllCustomAreas()
+                    }
+                />
+              </div>
+              }
+              {savedCustomAreas.length > 10000 &&
               <div key={`div_all_custom_areas`} style={{display: 'flex'}}>
                 <Checkbox key={`checkbox_all_custom_areas`}
                           color='primary'

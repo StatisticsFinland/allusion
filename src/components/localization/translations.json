@@ -104,6 +104,10 @@
       "Select all",
       "Valitse kaikki"
     ],
+    "deleteAll": [
+      "Delete all",
+      "Poista kaikki"
+    ],
     "selectAllMunis": [
       "Select all municipalities",
       "Valitse kaikki kunnat"
@@ -371,6 +375,10 @@
     "deleteConfirmation": [
       "Are you sure you want to delete the feature?",
       "Haluatko varmasti poistaa kohteen?"
+    ],
+    "deleteAllConfirmation": [
+      "Are you sure you want to delete all own features?",
+      "Haluatko varmasti poistaa kaikki kohteet?"
     ]
   },
   "shareDialog": {

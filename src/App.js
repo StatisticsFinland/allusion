@@ -56,6 +56,7 @@ class App extends Component {
     urlParameters: null,
     loading: false,
     munRegFeatures: [],
+    munRegLanguage: defaultLanguage,
     statisticsList: [],
     selectedMunips: [],
     statisticYear: 2018,
@@ -272,7 +273,7 @@ class App extends Component {
           }))
       );
       const munRegFeatures = RegionController.parseRegionsAndMunicipalities(jsons);
-      this.setState({munRegFeatures});
+      this.setState({munRegFeatures, munRegLanguage: language});
     } catch (e) {
       console.error("Failed to fetch", e);
     }
@@ -305,6 +306,7 @@ class App extends Component {
                 selectLayer={this.selectLayer}
                 selectedLayer={this.state.selectedLayer}
                 language={this.state.language ? this.state.language : defaultLanguage}
+                munRegLanguage={this.state.munRegLanguage}
                 munRegFeatures={this.state.munRegFeatures}
                 statisticsList={this.state.statisticsList}
                 statisticCode={this.state.statisticCode}

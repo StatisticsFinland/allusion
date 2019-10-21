@@ -33,6 +33,8 @@ import Legend from './Legend';
 import {FeatureUnion, ModifiableFeatureUnion} from './FeatureUnion';
 import uuid from "./functions/uuid";
 import queryString from 'query-string';
+import flatten from "lodash/flatten";
+import {defaultLanguage} from "../localization/languages";
 
 
 let interactions = defaultInteractions({altShiftDragRotate: false, pinchRotate: false});
@@ -73,7 +75,8 @@ class Map extends Component {
     variable: '',
     selectedLayer: null,
     relativeToArea: false,
-    municipalityBordersVisible: FinMun.get('linesVisibleInitially')
+    municipalityBordersVisible: FinMun.get('linesVisibleInitially'),
+    munRegLanguage: defaultLanguage
   };
 
   view = new View({
@@ -464,7 +467,8 @@ class Map extends Component {
       ret = true;
       const layer = this.getLayerByName('Municipalities');
       let source = layer.getSource();
-      if (source.getFeatures().length < regMuns.length) {
+
+      if (source.getFeatures().length < regMuns.length || this.state.munRegLanguage !== this.props.munRegLanguage) {
         let regionFeatureUnions = [];
         let majorRegionFeatureUnions = [];
 
@@ -481,7 +485,7 @@ class Map extends Component {
           );
         });
 
-        this.setState({regionFeatureUnions, majorRegionFeatureUnions});
+        this.setState({regionFeatureUnions, majorRegionFeatureUnions, munRegLanguage: this.props.munRegLanguage});
       }
       source.clear();
       source.addFeatures(regMuns);
@@ -742,6 +746,19 @@ class Map extends Component {
     this.setState({savedAreas})
   };
 
+  deleteAllCustomAreas = () => {
+    let customSelection = flatten([...this.state.savedCustomAreas.map(area => area.selection)]);
+    let selection = _.difference([...this.state.selection], customSelection);
+    this.drawerRef.catRef.addRemoveCustomMunids([], customSelection);
+    this.drawerRef.catRef.addRemoveFromSelection([], customSelection);
+    this.setState({savedCustomAreas: []},
+        () => this.changeMuns(selection,
+            this.state.regionFeatureUnions.filter(f => f.activated)
+                .map(f => f.id),
+            this.state.majorRegionFeatureUnions.filter(f => f.activated)
+                .map(f => f.id)))
+  };
+
   deleteCustomArea = id => {
     let area = this.state.savedCustomAreas.find(area => area.id === id);
     let savedCustomAreas = this.state.savedCustomAreas.filter(area => area.id !== id);
@@ -861,6 +878,7 @@ class Map extends Component {
               selection={this.state.selection}
               handleDelete={this.deleteArea}
               handleCustomAreaDelete={this.deleteCustomArea}
+              handleDeleteAllCustomAreas={this.deleteAllCustomAreas}
               features={this.props.munRegFeatures.map(mun => mun.getProperties())}
               statisticsList={this.props.statisticsList}
               changeOwnSelection={this.changeOwnSelection}
