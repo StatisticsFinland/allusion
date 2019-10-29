@@ -203,8 +203,8 @@ const featureUnionFieldAliases = [
   },
   {
     field: 'landArea',
-    en: '\nInformation about the area\nLand area (km2)',
-    fi: '\nAlueen tiedot\nMaapinta-ala (km2)',
+    en: '\nInformation about the area\nLand area (km²)',
+    fi: '\nAlueen tiedot\nMaapinta-ala (km²)',
     composedFrom: ['landArea'],
     type: 'num'
   }
@@ -274,13 +274,13 @@ const fieldAliases = [
   },
   {
     field: 'landArea',
-    en: 'Land area (km2)',
-    fi: 'Maapinta-ala (km2)'
+    en: 'Land area (km²)',
+    fi: 'Maapinta-ala (km²)'
   },
   {
     field: 'Väkiluku_km2',
-    en: 'Population / km2',
-    fi: 'Väkiluku / km2'
+    en: 'Population / km²',
+    fi: 'Väkiluku / km²'
   },
   {
     field: 'Väkiluku',
@@ -294,8 +294,8 @@ const fieldAliases = [
   },
   {
     field: 'Perheiden lukumäärä_km2',
-    en: 'Number of families / km2',
-    fi: 'Perheiden lukumäärä / km2'
+    en: 'Number of families / km²',
+    fi: 'Perheiden lukumäärä / km²'
   },
   {
     field: 'Asuntokuntien lukumäärä',
@@ -304,8 +304,8 @@ const fieldAliases = [
   },
   {
     field: 'Asuntokuntien lukumäärä_km2',
-    en: 'Number of household-dwelling units / km2',
-    fi: 'Asuntokuntien lukumäärä / km2'
+    en: 'Number of household-dwelling units / km²',
+    fi: 'Asuntokuntien lukumäärä / km²'
   },
   {
     field: 'Alueella asuvan työllisen työvoiman määrä',
@@ -314,8 +314,8 @@ const fieldAliases = [
   },
   {
     field: 'Alueella asuvan työllisen työvoiman määrä_km2',
-    en: 'Employed labour force resident in the area / km2',
-    fi: 'Alueella asuvan työllisen työvoiman määrä / km2'
+    en: 'Employed labour force resident in the area / km²',
+    fi: 'Alueella asuvan työllisen työvoiman määrä / km²'
   },
   {
     field: 'Alueella olevien työpaikkojen lukumäärä',
@@ -324,8 +324,8 @@ const fieldAliases = [
   },
   {
     field: 'Alueella olevien työpaikkojen lukumäärä_km2',
-    en: 'Number of workplaces in the area / km2',
-    fi: 'Alueella olevien työpaikkojen lukumäärä / km2'
+    en: 'Number of workplaces in the area / km²',
+    fi: 'Alueella olevien työpaikkojen lukumäärä / km²'
   },
   {
     field: 'Population',
@@ -334,8 +334,8 @@ const fieldAliases = [
   },
   {
     field: 'Population_km2',
-    en: 'Population / km2',
-    fi: 'Väkiluku / km2'
+    en: 'Population / km²',
+    fi: 'Väkiluku / km²'
   },
   {
     field: 'Number of families',
@@ -344,8 +344,8 @@ const fieldAliases = [
   },
   {
     field: 'Number of families_km2',
-    en: 'Number of families / km2',
-    fi: 'Perheiden lukumäärä / km2'
+    en: 'Number of families / km²',
+    fi: 'Perheiden lukumäärä / km²'
   },
   {
     field: 'Number of household-dwelling units',
@@ -354,8 +354,8 @@ const fieldAliases = [
   },
   {
     field: 'Number of household-dwelling units_km2',
-    en: 'Number of household-dwelling units / km2',
-    fi: 'Asuntokuntien lukumäärä / km2'
+    en: 'Number of household-dwelling units / km²',
+    fi: 'Asuntokuntien lukumäärä / km²'
   },
   {
     field: 'Employed labour force resident in the area',
@@ -364,8 +364,8 @@ const fieldAliases = [
   },
   {
     field: 'Employed labour force resident in the area_km2',
-    en: 'Employed labour force resident in the area / km2',
-    fi: 'Alueella asuvan työllisen työvoiman määrä / km2'
+    en: 'Employed labour force resident in the area / km²',
+    fi: 'Alueella asuvan työllisen työvoiman määrä / km²'
   },
   {
     field: 'Number of workplaces in the area',
@@ -374,8 +374,8 @@ const fieldAliases = [
   },
   {
     field: 'Number of workplaces in the area_km2',
-    en: 'Number of workplaces in the area / km2',
-    fi: 'Alueella olevien työpaikkojen lukumäärä / km2'
+    en: 'Number of workplaces in the area / km²',
+    fi: 'Alueella olevien työpaikkojen lukumäärä / km²'
   },
   {
     field: 'customAreaName',
