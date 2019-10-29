@@ -80,7 +80,7 @@ const blackList = {
   stats: ['id', 'ID', 'FID', 'fid', 'bbox', 'geometry', 'geom', 'regionkode', 'dagi_id', 'komkode', 'LAYERTITLE',
     'layer', 'DStkode', 'dstkode', 'dstnavn', 'kommune', 'zipcode', 'postinro', 'ponro', 'KODE', 'kode', 'year',
     'region', 'so', 'ds', 'municipalityCode', 'regionCode', 'municipalityName', 'regionName', 'regionNUTS', 'areaName',
-    'areaCode', 'areaNUTS', 'originalProperties', 'fillColor', 'customAreaName'],
+    'areaCode', 'areaNUTS', 'originalProperties', 'fillColor', 'customAreaName', 'municipalities', 'regions', 'majorRegions'],
   chart: ['id', 'Id', 'ID', 'fid', 'FID', 'oid', 'OID', 'code', 'CODE', 'kode', 'KODE', 'postinro', 'ponro', 'zipcode',
     'tunniste', 'bbox', 'Bbox', 'BBOX', 'bbox ', 'so', 'ds', 'originalProperties', 'fillColor'],
   styler: ['bbox', 'geometry', 'geom'],
@@ -177,6 +177,38 @@ function separateThousands(x) {
 const srs = 'EPSG:3067';
 
 const statisticList = ['NONE', 'M411', 'M302', 'M44', 'M137', 'M152'];
+
+
+const featureUnionFieldAliases = [
+  {
+    field: 'municipalities',
+    en: 'Municipalities',
+    fi: 'Kunnat',
+    composedFrom: ['municipalityName', 'municipalityCode'],
+    type: 'str'
+  },
+  {
+    field: 'regions',
+    en: 'Regions where the municipalities are located',
+    fi: 'Kuntien sijaintimaakunnat',
+    composedFrom: ['regionName', 'regionCode'],
+    type: 'str'
+  },
+  {
+    field: 'majorRegions',
+    en: 'Major regions where the municipalities are located:',
+    fi: 'Kuntien sijaintisuuralueet',
+    composedFrom: ['areaName', 'areaCode'],
+    type: 'str'
+  },
+  {
+    field: 'landArea',
+    en: '\nInformation about the area\nLand area (km2)',
+    fi: '\nAlueen tiedot\nMaapinta-ala (km2)',
+    composedFrom: ['landArea'],
+    type: 'num'
+  }
+];
 
 
 const fieldAliases = [
@@ -378,5 +410,6 @@ export {
   scaleColor,
   srs,
   separateThousands,
+  featureUnionFieldAliases,
   fieldAliases
 }

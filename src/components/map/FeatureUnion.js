@@ -4,6 +4,7 @@ import {EPSG3067} from "./projection/projections";
 import union from "@turf/union";
 import combine from "@turf/combine";
 import * as _ from "lodash";
+import {featureUnionFieldAliases} from "../../globals"
 
 class FeatureUnion {
   constructor(id, name, selection = []) {
@@ -49,17 +50,36 @@ class FeatureUnion {
       return result;
     }, {});
 
-    let properties = _.reduce(allProperties, (res, propVals, propKey) => {
-      if (propVals.length) {
-        if (propKey === 'landArea' || propKey === statField) {
-          const numVals = _.filter(propVals, v => !isNaN(v));
-          res[propKey] = numVals.length ? _.reduce(numVals, (r, v) => r + parseFloat(v), 0.0) : propVals[0];
-        } else {
-          res[propKey] = _.join(propVals, ", ");
-        }
-      }
-      return res;
-    }, {'customAreaName': this.name});
+    let properties = {'customAreaName': this.name};
+
+    let fieldAliases = [...featureUnionFieldAliases, {
+      field: statField,
+      composedFrom: [statField],
+      type: 'num'
+    }];
+
+    fieldAliases
+        .filter(fieldAlias => allProperties[fieldAlias.composedFrom[0]])
+        .forEach(fieldAlias => {
+          let value;
+          if (fieldAlias.type === 'num') {
+            const numVals = _.filter(allProperties[fieldAlias.composedFrom[0]], v => !isNaN(v));
+            value = numVals.length ? _.reduce(numVals, (r, v) => r + parseFloat(v), 0.0) :
+                allProperties[fieldAlias.composedFrom[0]][0];
+          } else {
+            if (fieldAlias.composedFrom.length === 2) {
+              let values = [];
+              for (const i of Array(allProperties[fieldAlias.composedFrom[0]].length).keys()) {
+                values.push(
+                    `${allProperties[fieldAlias.composedFrom[0]][i]} (${allProperties[fieldAlias.composedFrom[1]][i]})`);
+              }
+              value = _.join(values, ", ");
+            } else {
+              value = _.join(allProperties[fieldAlias.composedFrom[0]], ", ");
+            }
+          }
+          properties[fieldAlias.field] = value;
+        });
 
     if (properties[statField] && properties['landArea']) {
       properties[statField + "_km2"] = properties[statField] / properties['landArea'];
@@ -93,6 +113,9 @@ class FeatureUnion {
     }
 
     let unionFeature = format.readFeature(unionFeatureTurf);
+    Object.keys(unionFeature.getProperties())
+        .filter(field => field !== 'geometry')
+        .forEach(field => unionFeature.unset(field, true));
     unionFeature.setProperties(this.calculateAggregatedProperties(features, statisticalField));
     unionFeature.getGeometry().transform('EPSG:4326', EPSG3067.getCode());
 

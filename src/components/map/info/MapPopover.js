@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import {blackList, formatNum, isNumeric} from './../../../globals';
 import {LanguageContext} from './../../../App';
+import {featureUnionFieldAliases} from "../../../globals"
 
 const styles = theme => ({
     popover: {
@@ -17,7 +18,8 @@ const styles = theme => ({
     },
     typography: {
         fontSize: 14,
-        color: 'black'
+      color: 'black',
+      whiteSpace: 'pre-line'
     }
 });
 
@@ -40,9 +42,13 @@ class MapPopover extends Component {
                       {this.getKeys(feature)
                           .map((key, keyIndex) => {
                             if (key !== 'LAYERTITLE' && key !== this.props.timeField && !blackList.mapPopOver.includes(key)) {
-                                const keyTemp = fieldAliases.find(feat => feat.field === key)
+                              let keyTemp = featureUnionFieldAliases.find(feat => feat.field === key);
 
-                                const keyText = keyTemp[lan] ? keyTemp[lan] : '';
+                              let keyText = keyTemp && keyTemp[lan] ? keyTemp[lan] : '';
+                              if (keyText === '') {
+                                keyTemp = fieldAliases.find(feat => feat.field === key);
+                                keyText = keyTemp && keyTemp[lan] ? keyTemp[lan] : '';
+                              }
                                 return <Typography
                                     classes={{root: classes.typography}}
                                     key={`MapPopover_feat_${keyIndex}`}
