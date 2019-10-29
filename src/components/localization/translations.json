@@ -8,9 +8,17 @@
       "The service is partly funded by Eurostat.",
       "Palvelu on toteutettu osittain Eurostatin rahoituksella."
     ],
+    "feedback": [
+      "Feedback about the service can be sent to address",
+      "Palautetta palvelusta voi lähettää osoitteeseen"
+    ],
+    "feedbackEmail": [
+      "sijaintipalvelut@stat.fi",
+      "sijaintipalvelut@tilastokeskus.fi"
+    ],
     "developedBy": [
-      "This service prototype has been developed by Ubigu Ltd.",
-      "Pilottipalvelun toteutuksesta on vastannut Ubigu Oy."
+      "This service prototype has been developed by Ubigu Ltd. and Spatineo Ltd.",
+      "Pilottipalvelun toteutuksesta on vastannut Ubigu Oy ja Spatineo Oy."
     ],
     "meta": [
       "You can find more information behind this link in section: About table / Footnotes",
@@ -255,8 +263,8 @@
       "Aggregoitua tietoa taulukossa:"
     ],
     "step1": [
-      "1. Select areas and adjust any other settings on the left, and content will be created on the map.",
-      "1. Tee aluevalinta ja muut valinnat vasemmalta, jolloin saat alueet näkyviin kartalle."
+      "1. Select areas and adjust any other settings on the left, and content will be created on the map. You can also choose areas on the map holding the ALT-key and clicking the map with mouse over the features.",
+      "1. Tee aluevalinta ja muut valinnat vasemmalta, jolloin saat alueet näkyviin kartalle. Voit myös valita kohteita kartalla pitämällä ALT-näppäimen pohjassa ja klikkaamalla hiirellä karttaa kohteen päällä."
     ],
     "step2": [
       "2. When items have been rendered on the map, you may click them with the mouse or by touch gestures (on touch screen devices)",
@@ -268,15 +276,35 @@
     ],
     "step3b": [
       "3b. Another approach for selecting multiple features is to hold the CTRL key, click the map with the mouse and drag a selection box over the features you wish to select.",
-      "3b. Toinen tapa valita useampi kohde on painaa CTRL-näppäin pohjaan ja vetää hiirellä kartalle alue hiiren näppäin pohjassa. "
+      "3b. Toinen tapa valita useampi kohde on painaa CTRL-näppäin pohjaan ja vetää hiirellä kartalle alue hiiren näppäin pohjassa."
     ],
     "step4": [
-      "4. A table will open, which contains aggregated statistics (for the selected statistic) for your selection as well as individual information for the features.",
-      "4. Taulukko aukeaa, jossa on aggregoitua tietoa valitusta tilastomuuttujasta sekä valittujen kohteiden yksilölliset tiedot."
+      "4. A table will open, which contains aggregated statistics (for the selected statistic) for your selection as well as individual information for the features. If no features are selected, in the table will be shown information of all the features that are on the map.",
+      "4. Taulukko aukeaa, jossa on aggregoitua tietoa valitusta tilastomuuttujasta sekä valittujen kohteiden yksilölliset tiedot. Jos mitään kohteita ei ole valittu, näytetään taulukossa kaikkien kartalla olevien kohteiden tiedot."
     ],
     "naviMenu": [
-      "Administrative areas, statistics and basemaps are chosen through the Main menu. Areas can be chosen through 'Select areas' submenu. In 'Settings' submenu can be changed the type of the fetched administrative units' geometry. Selections can be saved in 'Own area selections' submenu. Statistics to be shown on the map can be selected in 'Statistics' submenu. In the 'Basemaps' submenu, the basemap can be selected.",
-      "Aluevalinnat, tilastot ja taustakartat valitaan Valikosta. Aluevalinnan voi tehdä 'Aluevalinta' -alavalikon alta. 'Asetukset'-alavalikosta voidaan vaihtaa haettavien aluerajausgeometrioiden tyyppiä. 'Tilastotieto' -alavalikosta voi valita kartalla näytettävän tilaston. 'Taustakartat'-alavalikosta voi valita haluamansa taustakartan."
+      "Administrative areas, statistics and basemaps are chosen through the Main menu.",
+      "Aluevalinnat, tilastot ja taustakartat valitaan Valikosta."
+    ],
+    "naviMenuStep1": [
+      "- Areas can be chosen through 'Select areas' submenu.",
+      "- Aluevalinnan voi tehdä 'Aluevalinta' -alavalikon alta."
+    ],
+    "naviMenuStep2": [
+      "- In 'Settings' submenu can be changed the type of the fetched administrative units' geometry.",
+      "- 'Asetukset'-alavalikosta voidaan vaihtaa haettavien aluerajausgeometrioiden tyyppiä."
+    ],
+    "naviMenuStep3": [
+      "- In 'Own areas' submenu the selected areas can be edited, saved and shared. Saved own area can be edited again by double-clicking the name of the own area.",
+      "- 'Omat alueet' -valikossa voi muokata valittuja alueita, tallentaa ne ja jakaa ne eteenpäin. Tallennettua omaa aluetta voi muokata kaksoisklikkaamalla oman alueen nimeä valikossa."
+    ],
+    "naviMenuStep4": [
+      "- Statistics to be shown on the map can be selected in 'Statistics' submenu.",
+      "- 'Tilastotieto' -alavalikosta voi valita kartalla näytettävän tilaston."
+    ],
+    "naviMenuStep5": [
+      "- In the 'Basemaps' submenu, the basemap can be selected.",
+      "- 'Taustakartat'-alavalikosta voi valita haluamansa taustakartan."
     ],
     "naviMenuOrig": [
       "Administrative areas, statistics and basemaps are chosen through the Main menu. Areas can be chosen through 'Select areas' submenu. In 'Settings' submenu can be changed the type of the fetched administrative units' geometry. Selections can be saved in 'Own area selections' submenu. Statistics to be shown on the map can be selected in 'Statistics' submenu. In the 'Basemaps' submenu, the basemap can be selected.",
