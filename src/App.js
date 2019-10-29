@@ -358,6 +358,12 @@ class App extends Component {
                 <Logo layerDrawerVisibility={this.state.showLayerDrawer} position={'fixed'} />
               </Hidden>
             }
+            {this.state.showLogo &&
+            <Hidden smUp>
+              <Logo layerDrawerVisibility={this.state.showLayerDrawer} position={'fixed'} size={'2.4rem'}
+                    fontSize={'1.2rem'}/>
+            </Hidden>
+            }
           </div>
         </LanguageContext.Provider>
       </MuiThemeProvider>

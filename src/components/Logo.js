@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React, {Component} from 'react';
+import {withStyles} from '@material-ui/core/styles';
 import logo from '../assets/tklogo_fi.png';
 import logo_en from '../assets/tklogo_en.png';
 import logo2 from '../assets/mml-logo_fi_rgb.png';
 import logo2_en from '../assets/mml-logo_en_rgb.png';
 import Typography from '@material-ui/core/Typography';
 
-import { LanguageContext } from './../App';
+import {LanguageContext} from './../App';
 
 
 const styles = {
@@ -48,7 +48,13 @@ class Logo extends Component {
                             src={lan === 'fi' ? logo2 : lan === 'en' ? logo2_en : ''}
                             alt='Map provider logo II'
                         ></img></a>
-                        <Typography style={{ fontSize: 26, color: 'red', bottom: '0.5rem', paddingTop: 15, paddingLeft: 20 }}>BETA</Typography>
+                      <Typography style={{
+                        fontSize: this.props.fontSize ? this.props.fontSize : 26,
+                        color: 'red',
+                        bottom: '0.5rem',
+                        paddingTop: 15,
+                        paddingLeft: 20
+                      }}>BETA</Typography>
                     </div >
                 );
             }}</LanguageContext.Consumer>
