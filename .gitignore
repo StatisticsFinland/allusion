@@ -1,6 +1,5 @@
 node_modules
 .DS_Store
 dist/
-src/assets
 /.idea/
 /allusion.iml
