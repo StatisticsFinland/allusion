@@ -106,7 +106,7 @@ const executeQuery = (input) => {
     const sparQL = new Promise((resolve, reject) => {
 
         const options = {
-            url: 'https://statfin-rdf-dev.azurewebsites.net/igalod/query',
+            url: 'https://tk-d-igalod-cont-1.azurewebsites.net/igalod/query',
             method: 'POST',
             headers: { 'Accept': 'application/sparql-results+json' },
             form: parseSparQL(prefixes, variables, clauses)

@@ -6,7 +6,7 @@ import {EPSG3067} from "../components/map/projection/projections";
 /* Controller for fetching municipality / region related information*/
 
 
-const baseUrl = 'https://statfin-rdf-dev.azurewebsites.net/igalod/query';
+const baseUrl = 'https://tk-d-igalod-cont-1.azurewebsites.net/igalod/query';
 const geomUrl = 'http://193.167.189.160/igalod/fuseki/ds/query';
 
 const generateReguest = (uri, query) => {

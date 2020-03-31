@@ -129,7 +129,7 @@ class infoDialog extends React.Component {
             <div>
               <Typography key={'child0'}>{txt.igalod.generalInfo}</Typography><br></br>
               <Typography key={'child1'}>
-                <a href="https://statfin-rdf-dev.azurewebsites.net/igalod/query">https://statfin-rdf-dev.azurewebsites.net/igalod/query</a><br></br>
+                <a href="https://tk-d-igalod-cont-1.azurewebsites.net/igalod/query">https://tk-d-igalod-cont-1.azurewebsites.net/igalod/query</a><br></br>
                 <a href="http://193.167.189.160/igalod/fuseki/ds/query">http://193.167.189.160/igalod/fuseki/ds/query</a><br></br>
                 <a href="https://pxnet2.stat.fi/PXWeb/api/v1/fi/Kuntien_avainluvut">https://pxnet2.stat.fi/PXWeb/api/v1/fi|en|sv/Kuntien_avainluvut</a>
               </Typography><br></br>
