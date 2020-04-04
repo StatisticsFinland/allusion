@@ -37,7 +37,7 @@
     "@material-ui/styles": "^3.0.0-alpha.10",
     "@turf/combine": "^5.1.5",
     "@turf/union": "^5.1.5",
-    "acorn": "^6.1.1",
+    "acorn": "^6.4.1",
     "babel-loader": "^8.0.5",
     "calculate-size": "^1.1.1",
     "chroma-js": "^2.0.3",
